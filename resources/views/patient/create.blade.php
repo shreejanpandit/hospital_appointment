@@ -1,5 +1,10 @@
 <x-guest-layout>
 
+    <div>
+        Name : {{ Auth::user()->name }} <br>
+        Email: {{ Auth::user()->email }} <br>
+        Role: {{ Auth::user()->role }} <br>
+    </div>
     <form method="POST" action="{{ route('patient.store') }}" enctype="multipart/form-data">
         @csrf
 
