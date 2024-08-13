@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\patient\PatientUpdateRequest;
 use App\Http\Requests\PatientStoreRequest;
 use App\Models\Appointment;
 use App\Models\Patient;
@@ -35,8 +36,14 @@ class PatientController extends Controller
     {
         $patient_validate = $request->all();
 
-        $name = $request->file('image')->getClientOriginalName();
-        $request->file('image')->move(public_path('uploads_patient'), $name);
+        // Check if an image is provided
+        if ($request->hasFile('image')) {
+            $name = $request->file('image')->getClientOriginalName();
+
+            $request->file('image')->move(public_path('uploads_patient'), $name);
+        } else {
+            $name = 'default_image.png';
+        }
 
         $dob = $request->dob;
         $dobDateTime = new DateTime($dob);
@@ -82,14 +89,8 @@ class PatientController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, int $id)
+    public function update(PatientUpdateRequest $request, int $id)
     {
-        $request->validate([
-            'dob' => 'required|date',
-            'gender' => 'required|in:male,female,other',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // Adjust validation rules as needed
-        ]);
-
         // Find the patient record
         $patient = Patient::findOrFail($id);
 

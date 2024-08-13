@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\doctor\DoctorStoreRequest;
+use App\Http\Requests\doctor\DoctorUpdateRequest;
 use App\Models\Appointment;
 use App\Models\Department;
 use App\Models\Doctor;
@@ -36,13 +37,22 @@ class DoctorController extends Controller
     {
         $doctor_validate = $request->all();
 
-        $name = $request->file('image')->getClientOriginalName();
-        $request->file('image')->move(public_path('uploads_doctor'), $name);
+        // Check if an image is provided
+        if ($request->hasFile('image')) {
+            $name = $request->file('image')->getClientOriginalName();
+
+            $request->file('image')->move(public_path('uploads_doctor'), $name);
+        } else {
+            $name = 'default_image.png';
+        }
         $doctor_validate['image'] = $name;
+
         $user = Auth::user();
         $doctor_validate["user_id"] = $user->id;
         // dd($doctor_validate);
+
         Doctor::create($doctor_validate);
+
         return redirect()->route('doctor.dashboard')->with('status', [
             'message' => 'Doctor Created sucessfully',
             'type' => 'success'
@@ -51,13 +61,8 @@ class DoctorController extends Controller
 
     public function dashboard()
     {
-        // Get the currently authenticated user
         $user = Auth::user();
-
-        // Fetch the doctor record associated with the logged-in user
         $doctor = Doctor::where('user_id', $user->id)->firstOrFail();
-
-        // Fetch appointments related to this doctor
         $appointments = Appointment::where('doctor_id', $doctor->id)->get();
 
         // Define the current date and time
@@ -69,7 +74,6 @@ class DoctorController extends Controller
         $upcomingAppointments = [];
         $previousAppointments = [];
 
-        // Categorize appointments
         foreach ($appointments as $appointment) {
             if ($appointment->date->isSameDay($today)) {
                 $todayAppointments[] = $appointment;
@@ -80,7 +84,6 @@ class DoctorController extends Controller
             }
         }
 
-        // Pass relevant data to the view
         return view('doctor.dashboard', [
             'doctor' => $doctor,
             'todayAppointments' => $todayAppointments,
@@ -108,23 +111,21 @@ class DoctorController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, int $id)
+    public function update(DoctorUpdateRequest $request, int $id)
     {
-        $request->validate([
-            'contact' => 'required|string|max:15',
-            'bio' => 'required|string|max:250',
-            'department_id' => 'required|exists:departments,id',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // Adjust validation rules as needed
-        ]);
+        // // Validate the request
+        // $request->validate([
+        //     'contact' => 'required|string|max:15',
+        //     'bio' => 'required|string|max:250',
+        //     'department_id' => 'required|exists:departments,id',
+        //     'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        // ]);
 
-        // Find the doctor record
-        $doctor = doctor::findOrFail($id);
+        $doctor = Doctor::findOrFail($id);
 
-        // Update doctor details
         $doctor->contact = $request->input('contact');
         $doctor->bio = $request->input('bio');
         $doctor->department_id = $request->input('department_id');
-        $doctor->image = $request->input('image');
 
         // Handle file upload
         if ($request->hasFile('image')) {
@@ -143,10 +144,11 @@ class DoctorController extends Controller
 
         // Redirect back with success message
         return redirect()->back()->with('status', [
-            'message' => 'Doctor updated sucessfully',
+            'message' => 'Doctor updated successfully',
             'type' => 'success'
         ]);
     }
+
 
     /**
      * Remove the specified resource from storage.

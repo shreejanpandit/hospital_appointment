@@ -27,19 +27,16 @@
             <x-input-error class="mt-2" :messages="$errors->get('contact')" />
         </div>
 
-        <div>
-            <x-input-label for="department" :value="__('Department')" />
-            <select id="department" name="department" class="mt-1 block w-full px-3" required>
-                <option value="" disabled>{{ __('Select Department') }}</option>
-                @foreach ($departments as $department)
-                    <option value="{{ $department->id }}"
-                        {{ old('department', $user->doctor->department_id) == $department->id ? 'selected' : '' }}>
-                        {{ $department->name }}
-                    </option>
-                @endforeach
-            </select>
-            <x-input-error class="mt-2" :messages="$errors->get('department')" />
-        </div>
+        <select id="department" name="department_id" class="mt-1 block w-full px-3" required>
+            <option value="" disabled>{{ __('Select Department') }}</option>
+            @foreach ($departments as $department)
+                <option value="{{ $department->id }}"
+                    {{ old('department_id', $user->doctor->department_id) == $department->id ? 'selected' : '' }}>
+                    {{ $department->name }}
+                </option>
+            @endforeach
+        </select>
+
 
         <div>
             <x-input-label for="bio" :value="__('Bio')" />
