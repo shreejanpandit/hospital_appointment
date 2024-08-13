@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\appointment\AppointmentStoreRequest;
 use App\Models\Appointment;
+use App\Models\Department;
+use App\Models\Doctor;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AppointmentController extends Controller
 {
@@ -20,23 +24,44 @@ class AppointmentController extends Controller
      */
     public function create()
     {
-        //
+        $userPatient = Auth::user()->patient;
+        $doctors = Doctor::all();
+        $departments = Department::with('doctors')->get();
+
+        return view('appointment.create', [
+            'patient' => $userPatient,
+            'doctors' => $doctors,
+            'departments' => $departments
+        ]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(AppointmentStoreRequest $request)
     {
-        //
+        $appointment_validate = $request->all();
+
+        unset($appointment_validate["department_id"]);
+        // dd($appointment_validate);
+
+        Appointment::create($appointment_validate);
+        return redirect()->route('patient.dashboard')->with('status', [
+            'message' => 'Appointment booked sucessfully',
+            'type' => 'success'
+        ]);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Appointment $appointment)
+    public function show($id)
     {
-        //
+        // Find the appointment by ID
+        $appointment = Appointment::findOrFail($id);
+
+        // Pass the appointment to the view
+        return view('appointment.show', compact('appointment'));
     }
 
     /**

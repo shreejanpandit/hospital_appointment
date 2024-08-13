@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\PatientStoreRequest;
+use App\Models\Appointment;
 use App\Models\Patient;
 use DateTime;
 use Illuminate\Http\Request;
@@ -53,7 +54,9 @@ class PatientController extends Controller
 
     public function dashboard()
     {
-        return view('patient.dashboard');
+        $appointments = Appointment::with('patient')->get();
+
+        return view('patient.dashboard', ['appointments' => $appointments]);
     }
 
     /**
