@@ -8,6 +8,7 @@ use App\Models\Department;
 use App\Models\Doctor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class DoctorController extends Controller
 {
@@ -107,9 +108,44 @@ class DoctorController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Doctor $doctor)
+    public function update(Request $request, int $id)
     {
-        //
+        $request->validate([
+            'contact' => 'required|string|max:15',
+            'bio' => 'required|string|max:250',
+            'department_id' => 'required|exists:departments,id',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // Adjust validation rules as needed
+        ]);
+
+        // Find the doctor record
+        $doctor = doctor::findOrFail($id);
+
+        // Update doctor details
+        $doctor->contact = $request->input('contact');
+        $doctor->bio = $request->input('bio');
+        $doctor->department_id = $request->input('department_id');
+        $doctor->image = $request->input('image');
+
+        // Handle file upload
+        if ($request->hasFile('image')) {
+            // Delete old image if it exists
+            if ($doctor->image && Storage::exists('public/uploads_doctor/' . $doctor->image)) {
+                Storage::delete('public/uploads_doctor/' . $doctor->image);
+            }
+
+            // Store new image
+            $imagePath = $request->file('image')->store('uploads_doctor', 'public');
+            $doctor->image = basename($imagePath);
+        }
+
+        // Save changes
+        $doctor->save();
+
+        // Redirect back with success message
+        return redirect()->back()->with('status', [
+            'message' => 'Doctor updated sucessfully',
+            'type' => 'success'
+        ]);
     }
 
     /**

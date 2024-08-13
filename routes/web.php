@@ -34,6 +34,7 @@ Route::middleware('auth')->group(function () {
     Route::get('patient/dashboard', [PatientController::class, 'dashboard'])->name('patient.dashboard');
     Route::post('doctor', [DoctorController::class, 'store'])->name('doctor.store');
     Route::patch('patient/{id}', [PatientController::class, 'update'])->name('patient.update');
+    Route::patch('doctor/{id}', [DoctorController::class, 'update'])->name('doctor.update');
 });
 
 require __DIR__ . '/auth.php';

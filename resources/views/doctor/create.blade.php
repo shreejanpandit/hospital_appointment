@@ -1,9 +1,9 @@
 <x-guest-layout>
     <form method="POST" action="{{ route('doctor.store') }}" enctype="multipart/form-data"
-        class="max-w-2xl mx-auto bg-white shadow-md rounded-lg p-6 border border-gray-200">
+        class="max-w-2xl mx-auto bg-white shadow-md rounded-lg p-6 ">
         @csrf
 
-        <div class="mb-6 mt-3 p-4 border-2 border-teal-300 rounded-lg bg-white shadow-md">
+        <div class="mb-6 mt-3 p-4   rounded-lg bg-white shadow-md">
             <h2 class="text-xl font-semibold text-gray-800 mb-4 text-center">User Information</h2>
             <div class="mb-2">
                 <span class="font-medium text-gray-700">Name:</span>
@@ -47,11 +47,17 @@
 
         <!-- Bio -->
         <div class="mb-6">
-            <x-input-label for="bio" value="Bio" />
+            {{-- <x-input-label for="bio" value="Bio" />
             <x-text-input id="bio"
                 class="block mt-1 w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
                 type="text" name="bio" required autocomplete="new-bio" />
-            <x-input-error :messages="$errors->get('bio')" class="mt-2 text-red-600" />
+            <x-input-error :messages="$errors->get('bio')" class="mt-2 text-red-600" /> --}}
+
+            <x-input-label for="bio" :value="__('Bio')" />
+            <textarea id="bio" name="bio"
+                class="block mt-1 w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                rows="4" required></textarea>
+            <x-input-error class="mt-2 text-red-600" :messages="$errors->get('bio')" />
         </div>
 
         <!-- Image -->
