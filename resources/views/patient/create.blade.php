@@ -20,7 +20,7 @@
         <div class="mt-4">
             <x-input-label for="dob" value="Date Of Birth" />
             <x-text-input id="dob" class="block mt-1 w-full" type="date" name="dob" />
-            <!--   <x-input-error :messages="$errors->get('contact')" class="mt-2" /> -->
+            <x-input-error :messages="$errors->get('dob')" class="mt-2" />
 
         </div>
 

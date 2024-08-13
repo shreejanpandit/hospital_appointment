@@ -18,7 +18,7 @@
                         <!-- Patient -->
                         <div>
                             <x-input-label for="patient_id" :value="__('Patient')" />
-                            <select id="patient_id" name="patient_id" class="block mt-1 w-full" required>
+                            <select id="patient_id" name="patient_id" class="block mt-1 w-full">
                                 @if ($patient)
                                     <option value="{{ $patient->id }}" selected>
                                         {{ $patient->user->name }}
@@ -33,10 +33,11 @@
                         <!-- Department -->
                         <div class="mt-4">
                             <x-input-label for="department_id" :value="__('Department')" />
-                            <select id="department_id" name="department_id" class="block mt-1 w-full" required>
-                                <option value="">Select a Department</option>
+                            <select id="department_id" name="department_id" class="block mt-1 w-full">
+                                <option value="" {{ old('department_id') }}>Select a Department</option>
                                 @foreach ($departments as $department)
-                                    <option value="{{ $department->id }}">
+                                    <option value="{{ $department->id }}"
+                                        {{ old('department_id') == $department->id ? 'selected' : '' }}>
                                         {{ $department->name }}
                                     </option>
                                 @endforeach
@@ -47,7 +48,7 @@
                         <!-- Doctor -->
                         <div class="mt-4">
                             <x-input-label for="doctor_id" :value="__('Doctor')" />
-                            <select id="doctor_id" name="doctor_id" class="block mt-1 w-full" required>
+                            <select id="doctor_id" name="doctor_id" class="block mt-1 w-full">
                                 <option value="">Select a Doctor</option>
                             </select>
                             <x-input-error :messages="$errors->get('doctor_id')" class="mt-2" />
@@ -67,7 +68,7 @@
                         <div class="mt-4">
                             <x-input-label for="date" :value="__('Date')" />
                             <x-text-input id="date" class="block mt-1 w-full" type="date" name="date"
-                                :value="old('date')" required />
+                                :value="old('date')" />
                             <x-input-error :messages="$errors->get('date')" class="mt-2" />
                         </div>
 
@@ -75,7 +76,7 @@
                         <div class="mt-4">
                             <x-input-label for="time" :value="__('Time')" />
                             <x-text-input id="time" class="block mt-1 w-full" type="time" name="time"
-                                :value="old('time')" required />
+                                :value="old('time')" />
                             <x-input-error :messages="$errors->get('time')" class="mt-2" />
                         </div>
 

@@ -24,7 +24,7 @@
             <x-input-label for="contact" value="Contact" />
             <x-text-input id="contact"
                 class="block mt-1 w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                type="text" name="contact" required autocomplete="new-contact" />
+                type="text" name="contact" autocomplete="new-contact" :value="old('contact')" />
             <x-input-error :messages="$errors->get('contact')" class="mt-2 text-red-600" />
         </div>
 
@@ -32,8 +32,7 @@
         <div class="mb-6">
             <x-input-label for="department_id" :value="__('Department')" />
             <select id="department_id" name="department_id"
-                class="block mt-1 w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                required>
+                class="block mt-1 w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
                 <option value="">Select Department</option>
                 @foreach ($departments as $department)
                     <option value="{{ $department->id }}"
@@ -50,13 +49,13 @@
             {{-- <x-input-label for="bio" value="Bio" />
             <x-text-input id="bio"
                 class="block mt-1 w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                type="text" name="bio" required autocomplete="new-bio" />
+                type="text" name="bio"  autocomplete="new-bio" />
             <x-input-error :messages="$errors->get('bio')" class="mt-2 text-red-600" /> --}}
 
             <x-input-label for="bio" :value="__('Bio')" />
             <textarea id="bio" name="bio"
                 class="block mt-1 w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                rows="4" required></textarea>
+                rows="4">{{ old('bio') }} </textarea>
             <x-input-error class="mt-2 text-red-600" :messages="$errors->get('bio')" />
         </div>
 

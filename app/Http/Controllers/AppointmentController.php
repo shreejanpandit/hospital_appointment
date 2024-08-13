@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\appointment\AppointmentStoreRequest;
+use App\Jobs\SendAppointmentMailJob;
 use App\Mail\AppointmentMail;
 use App\Models\Appointment;
 use App\Models\Department;
@@ -42,18 +43,22 @@ class AppointmentController extends Controller
      */
     public function store(AppointmentStoreRequest $request)
     {
+        $user = Auth::user();
 
         $mailData = [
             'title' => 'Hospital Appointment',
-            'body' => 'Your appointment has been booked sucessfully !!!'
+            'body' => 'Your appointment has been booked sucessfully !!!',
+            'email' => $user->email
         ];
         $appointment_validate = $request->all();
 
         unset($appointment_validate["department_id"]);
         // dd($appointment_validate);
-
+        // dd($user->email);
         Appointment::create($appointment_validate);
-        Mail::to('shreezanpandit@gmail.com')->send(new AppointmentMail($mailData));
+
+        //dispatch mail
+        dispatch(new SendAppointmentMailJob($mailData));
         return redirect()->route('patient.dashboard')->with('status', [
             'message' => 'Appointment booked sucessfully',
             'type' => 'success'

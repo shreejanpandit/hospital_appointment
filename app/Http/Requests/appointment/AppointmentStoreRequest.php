@@ -24,7 +24,7 @@ class AppointmentStoreRequest extends FormRequest
         return [
             "patient_id" => "required|integer|exists:patients,id",
             "doctor_id" => "required|integer|exists:doctors,id",
-            "description" => "nullable|string|max:255",
+            "description" => "required|string|max:255",
             "date" => "required|date|after_or_equal:today",
             "time" => "required|date_format:H:i"
         ];
