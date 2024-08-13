@@ -16,7 +16,7 @@
                 <div class="p-6 text-gray-900 dark:text-gray-100">
                     <!-- Doctor Information -->
                     <div class="mb-6">
-                        <h1 class="text-3xl font-bold mb-2">Welcome, <b>Dr. {{ $doctor->user->name }}</b></h1>
+                        <h3 class="text-2xl font-bold mb-2">Welcome, Dr. {{ $doctor->user->name }}</h3>
                     </div>
 
                     <!-- Appointments Sections -->

@@ -15,7 +15,7 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <!-- Profile Section -->
-            <h1 class="text-2xl font-bold mb-4">Hello , <b>{{ Auth::user()->name }}</b> your upcoming appointments</h1>
+            <h1 class="text-xl font-bold mb-4">Hello , {{ Auth::user()->name }} your upcoming appointments</h1>
 
 
             <!-- Appointments Section -->
@@ -30,7 +30,7 @@
                                 $time = \Carbon\Carbon::parse($appointment->time);
                             @endphp
                             <li
-                                class="px-4 py-4 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-300 border border-cyan-800">
+                                class="px-4 py-4 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-300 ">
                                 <div class="flex items-center justify-between">
                                     <div>
                                         <p class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1">
