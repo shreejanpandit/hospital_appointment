@@ -8,6 +8,7 @@ use App\Models\Patient;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class PatientController extends Controller
 {
@@ -49,7 +50,10 @@ class PatientController extends Controller
 
         Patient::create($patient_validate);
 
-        return redirect()->route('patient.dashboard');
+        return redirect()->route('patient.dashboard')->with('status', [
+            'message' => 'Patient Created sucessfully',
+            'type' => 'success'
+        ]);
     }
 
     public function dashboard()
@@ -78,9 +82,41 @@ class PatientController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Patient $patient)
+    public function update(Request $request, int $id)
     {
-        //
+        $request->validate([
+            'dob' => 'required|date',
+            'gender' => 'required|in:male,female,other',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // Adjust validation rules as needed
+        ]);
+
+        // Find the patient record
+        $patient = Patient::findOrFail($id);
+
+        // Update patient details
+        $patient->dob = $request->input('dob');
+        $patient->gender = $request->input('gender');
+
+        // Handle file upload
+        if ($request->hasFile('image')) {
+            // Delete old image if it exists
+            if ($patient->image && Storage::exists('public/uploads_patient/' . $patient->image)) {
+                Storage::delete('public/uploads_patient/' . $patient->image);
+            }
+
+            // Store new image
+            $imagePath = $request->file('image')->store('uploads_patient', 'public');
+            $patient->image = basename($imagePath);
+        }
+
+        // Save changes
+        $patient->save();
+
+        // Redirect back with success message
+        return redirect()->back()->with('status', [
+            'message' => 'Patient updated sucessfully',
+            'type' => 'success'
+        ]);
     }
 
     /**

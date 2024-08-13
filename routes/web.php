@@ -32,6 +32,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('doctor/dashboard', [DoctorController::class, 'dashboard'])->name('doctor.dashboard');
     Route::get('patient/dashboard', [PatientController::class, 'dashboard'])->name('patient.dashboard');
+    Route::post('doctor', [DoctorController::class, 'store'])->name('doctor.store');
+    Route::patch('patient/{id}', [PatientController::class, 'update'])->name('patient.update');
 });
 
 require __DIR__ . '/auth.php';

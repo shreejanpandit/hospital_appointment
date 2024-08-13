@@ -42,7 +42,10 @@ class DoctorController extends Controller
         $doctor_validate["user_id"] = $user->id;
         // dd($doctor_validate);
         Doctor::create($doctor_validate);
-        return redirect()->route('doctor.dashboard');
+        return redirect()->route('doctor.dashboard')->with('status', [
+            'message' => 'Doctor Created sucessfully',
+            'type' => 'success'
+        ]);
     }
 
     public function dashboard()

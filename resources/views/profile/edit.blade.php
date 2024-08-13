@@ -13,6 +13,23 @@
                 </div>
             </div>
 
+            <!-- Update Patient Details -->
+            @if (Auth::user()->role === 'patient')
+                <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+                    <div class="max-w-xl">
+                        @include('profile.partials.update-patient-details-form')
+                    </div>
+                </div>
+            @endif
+
+            <!-- Update Doctor Details -->
+            @if (Auth::user()->role === 'doctor')
+                <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+                    <div class="max-w-xl">
+                        @include('profile.partials.update-doctor-details-form')
+                    </div>
+                </div>
+            @endif
             <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
                 <div class="max-w-xl">
                     @include('profile.partials.update-password-form')
