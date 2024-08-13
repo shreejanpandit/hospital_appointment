@@ -11,17 +11,30 @@
 
     @php
         $user = Auth::user();
-        $dob = $user->patient->dob;
-        // Check if $dob is a DateTime object or string and format accordingly
-        $dobFormatted = $dob instanceof \DateTime ? $dob->format('Y-m-d') : $dob;
+        $patient = $user->patient;
+
+        // Initialize default values if $patient is null
+        $dob = $patient ? $patient->dob : '';
+        $gender = $patient ? $patient->gender : '';
+        $image = $patient ? $patient->image : '';
+
+        // Format $dob if it's a DateTime object
+
+$dobFormatted = $dob instanceof \DateTime ? $dob->format('Y-m-d') : $dob;
+
+        // Determine if the patient exists
+        $hasPatient = !is_null($patient);
     @endphp
 
-    <form method="post" action="{{ route('patient.update', $user->patient->id) }}" class="mt-6 space-y-6"
-        enctype="multipart/form-data">
+    <form method="post" action="{{ $hasPatient ? route('patient.update', $patient->id) : route('patient.store') }}"
+        class="mt-6 space-y-6" enctype="multipart/form-data">
         @csrf
-        @method('patch')
+        @if ($hasPatient)
+            @method('patch')
+        @else
+            @method('post')
+        @endif
 
-        <!-- Existing fields like name and email would go here -->
 
         <div>
             <x-input-label for="dob" :value="__('Date of Birth')" />
@@ -34,11 +47,11 @@
             <x-input-label for="gender" :value="__('Gender')" />
             <select id="gender" name="gender" class="mt-1 block w-full" required>
                 <option value="" disabled>{{ __('Select Gender') }}</option>
-                <option value="male" {{ old('gender', $user->patient->gender) === 'male' ? 'selected' : '' }}>
+                <option value="male" {{ old('gender', $gender) === 'male' ? 'selected' : '' }}>
                     {{ __('Male') }}</option>
-                <option value="female" {{ old('gender', $user->patient->gender) === 'female' ? 'selected' : '' }}>
+                <option value="female" {{ old('gender', $gender) === 'female' ? 'selected' : '' }}>
                     {{ __('Female') }}</option>
-                <option value="other" {{ old('gender', $user->patient->gender) === 'other' ? 'selected' : '' }}>
+                <option value="other" {{ old('gender', $gender) === 'other' ? 'selected' : '' }}>
                     {{ __('Other') }}</option>
             </select>
             <x-input-error class="mt-2" :messages="$errors->get('gender')" />
@@ -47,8 +60,8 @@
         <div>
             <x-input-label for="image" :value="__('Profile Image')" />
             <input id="image" name="image" type="file" class="mt-1 block w-full" />
-            @if ($user->patient->image)
-                <img src="{{ asset('uploads_patient/' . $user->patient->image) }}" alt="Profile Image"
+            @if ($image)
+                <img src="{{ asset('uploads_patient/' . $image) }}" alt="Profile Image"
                     class="mt-2 w-24 h-24 object-cover" />
             @endif
             <x-input-error class="mt-2" :messages="$errors->get('image')" />
