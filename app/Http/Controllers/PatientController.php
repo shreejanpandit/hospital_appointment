@@ -54,8 +54,8 @@ class PatientController extends Controller
 
     public function dashboard()
     {
-        $appointments = Appointment::with('patient')->get();
-
+        $user = Auth::user();
+        $appointments = Appointment::where('patient_id', $user->patient->id)->with('patient')->get();
         return view('patient.dashboard', ['appointments' => $appointments]);
     }
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\doctor\DoctorStoreRequest;
+use App\Models\Appointment;
 use App\Models\Department;
 use App\Models\Doctor;
 use Illuminate\Http\Request;
@@ -46,7 +47,42 @@ class DoctorController extends Controller
 
     public function dashboard()
     {
-        return view('doctor.dashboard');
+        // Get the currently authenticated user
+        $user = Auth::user();
+
+        // Fetch the doctor record associated with the logged-in user
+        $doctor = Doctor::where('user_id', $user->id)->firstOrFail();
+
+        // Fetch appointments related to this doctor
+        $appointments = Appointment::where('doctor_id', $doctor->id)->get();
+
+        // Define the current date and time
+        $today = now()->startOfDay();
+        $tomorrow = now()->addDay()->startOfDay();
+
+        // Initialize arrays for each category of appointments
+        $todayAppointments = [];
+        $upcomingAppointments = [];
+        $previousAppointments = [];
+
+        // Categorize appointments
+        foreach ($appointments as $appointment) {
+            if ($appointment->date->isSameDay($today)) {
+                $todayAppointments[] = $appointment;
+            } elseif ($appointment->date->greaterThan($today)) {
+                $upcomingAppointments[] = $appointment;
+            } else {
+                $previousAppointments[] = $appointment;
+            }
+        }
+
+        // Pass relevant data to the view
+        return view('doctor.dashboard', [
+            'doctor' => $doctor,
+            'todayAppointments' => $todayAppointments,
+            'upcomingAppointments' => $upcomingAppointments,
+            'previousAppointments' => $previousAppointments
+        ]);
     }
 
     /**
