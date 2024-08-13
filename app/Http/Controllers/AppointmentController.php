@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\appointment\AppointmentStoreRequest;
+use App\Mail\AppointmentMail;
 use App\Models\Appointment;
 use App\Models\Department;
 use App\Models\Doctor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class AppointmentController extends Controller
 {
@@ -40,12 +42,18 @@ class AppointmentController extends Controller
      */
     public function store(AppointmentStoreRequest $request)
     {
+
+        $mailData = [
+            'title' => 'Hospital Appointment',
+            'body' => 'Your appointment has been booked sucessfully !!!'
+        ];
         $appointment_validate = $request->all();
 
         unset($appointment_validate["department_id"]);
         // dd($appointment_validate);
 
         Appointment::create($appointment_validate);
+        Mail::to('shreezanpandit@gmail.com')->send(new AppointmentMail($mailData));
         return redirect()->route('patient.dashboard')->with('status', [
             'message' => 'Appointment booked sucessfully',
             'type' => 'success'

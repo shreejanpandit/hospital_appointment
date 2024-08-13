@@ -113,13 +113,6 @@ class DoctorController extends Controller
      */
     public function update(DoctorUpdateRequest $request, int $id)
     {
-        // // Validate the request
-        // $request->validate([
-        //     'contact' => 'required|string|max:15',
-        //     'bio' => 'required|string|max:250',
-        //     'department_id' => 'required|exists:departments,id',
-        //     'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-        // ]);
 
         $doctor = Doctor::findOrFail($id);
 
@@ -127,19 +120,15 @@ class DoctorController extends Controller
         $doctor->bio = $request->input('bio');
         $doctor->department_id = $request->input('department_id');
 
-        // Handle file upload
         if ($request->hasFile('image')) {
-            // Delete old image if it exists
             if ($doctor->image && Storage::exists('public/uploads_doctor/' . $doctor->image)) {
                 Storage::delete('public/uploads_doctor/' . $doctor->image);
             }
 
-            // Store new image
             $imagePath = $request->file('image')->store('uploads_doctor', 'public');
             $doctor->image = basename($imagePath);
         }
 
-        // Save changes
         $doctor->save();
 
         // Redirect back with success message
