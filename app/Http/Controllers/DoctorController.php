@@ -7,12 +7,15 @@ use App\Http\Requests\doctor\DoctorUpdateRequest;
 use App\Models\Appointment;
 use App\Models\Department;
 use App\Models\Doctor;
+use App\Models\Schedule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class DoctorController extends Controller
 {
+
+
     /**
      * Display a listing of the resource.
      */
@@ -89,6 +92,65 @@ class DoctorController extends Controller
             'todayAppointments' => $todayAppointments,
             'upcomingAppointments' => $upcomingAppointments,
             'previousAppointments' => $previousAppointments
+        ]);
+    }
+
+
+
+    public function showSchedule()
+    {
+        $user = Auth::user();
+        $doctorId = $user->doctor->id;
+
+        // Define the days of the week
+        $weekDays = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+
+        // Fetch the existing schedule for the doctor
+        $schedules = Schedule::where('doctor_id', $doctorId)
+            ->get()
+            ->keyBy('week_day');
+
+        // Prepare data to pass to the view
+        $scheduleData = [];
+        foreach ($weekDays as $day) {
+            $scheduleData[$day . '_start_time'] = $schedules->get($day)->start_time ?? '';
+            $scheduleData[$day . '_end_time'] = $schedules->get($day)->end_time ?? '';
+        }
+
+        return view('doctor.schedule', [
+            'weekDays' => $weekDays,
+            'schedule' => $scheduleData
+        ]);
+    }
+
+    public function updateSchedule(Request $request)
+    {
+        $user = Auth::user();
+        $doctorId = $user->doctor->id;
+
+        $weekDays = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+
+        foreach ($weekDays as $day) {
+            $startTime = $request->input("{$day}_start_time");
+            $endTime = $request->input("{$day}_end_time");
+
+            if ($startTime && $endTime) {
+                Schedule::updateOrCreate(
+                    [
+                        'doctor_id' => $doctorId,
+                        'week_day' => $day
+                    ],
+                    [
+                        'start_time' => $startTime,
+                        'end_time' => $endTime
+                    ]
+                );
+            }
+        }
+
+        return redirect()->route('doctor.schedule')->with('status', [
+            'message' => 'Schedule updated successfully',
+            'type' => 'success'
         ]);
     }
 
