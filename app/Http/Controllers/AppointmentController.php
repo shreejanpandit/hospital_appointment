@@ -48,10 +48,19 @@ class AppointmentController extends Controller
         $mailData = [
             'title' => 'Hospital Appointment',
             'body' => 'Your appointment has been booked sucessfully !!!',
-            'email' => $user->email
+            'patient_email' => $user->email
         ];
         $appointment_validate = $request->all();
 
+
+        $doctorId = $appointment_validate['doctor_id'];
+        $doctor = Doctor::with('user')->find($doctorId);
+        $doctor_email = $doctor->user->email;
+        $doctor_name = $doctor->user->name;
+        $patient_name = $user->name;
+        $mailData['doctor_email'] = $doctor_email;
+        $mailData['doctor_name'] = $doctor_name;
+        $mailData['patient_name'] = $patient_name;
         unset($appointment_validate["department_id"]);
         // dd($appointment_validate);
         // dd($user->email);

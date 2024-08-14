@@ -3,6 +3,8 @@
 namespace App\Jobs;
 
 use App\Mail\AppointmentMail;
+use App\Mail\DoctorAppointmentMail;
+use App\Mail\PatientAppointmentMail;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Queue\Queueable;
@@ -27,7 +29,7 @@ class SendAppointmentMailJob implements ShouldQueue
      */
     public function handle(): void
     {
-        // dd($this->mailData['email']);
-        Mail::to($this->mailData['email'])->send(new AppointmentMail($this->mailData));
+        Mail::to($this->mailData['patient_email'])->send(new PatientAppointmentMail($this->mailData));
+        Mail::to($this->mailData['doctor_email'])->send(new DoctorAppointmentMail($this->mailData));
     }
 }
