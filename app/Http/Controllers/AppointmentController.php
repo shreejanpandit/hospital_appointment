@@ -8,6 +8,7 @@ use App\Mail\AppointmentMail;
 use App\Models\Appointment;
 use App\Models\Department;
 use App\Models\Doctor;
+use App\Models\Schedule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -41,38 +42,43 @@ class AppointmentController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(AppointmentStoreRequest $request)
+    // AppointmentController.php
+    public function store(AppointmentStoreRequest  $request)
     {
+        // dd($request);
         $user = Auth::user();
+        $doctorId = $request['doctor_id'];
 
-        $mailData = [
-            'title' => 'Hospital Appointment',
-            'body' => 'Your appointment has been booked sucessfully !!!',
-            'patient_email' => $user->email
-        ];
-        $appointment_validate = $request->all();
+        $appointment = Appointment::create([
+            'patient_id' => $user->patient->id,
+            'doctor_id' => $doctorId,
+            'description' => $request['description'],
+            'date' => $request['date'],
+            'time' => $request['time']
+        ]);
 
-
-        $doctorId = $appointment_validate['doctor_id'];
         $doctor = Doctor::with('user')->find($doctorId);
         $doctor_email = $doctor->user->email;
         $doctor_name = $doctor->user->name;
-        $patient_name = $user->name;
-        $mailData['doctor_email'] = $doctor_email;
-        $mailData['doctor_name'] = $doctor_name;
-        $mailData['patient_name'] = $patient_name;
-        unset($appointment_validate["department_id"]);
-        // dd($appointment_validate);
-        // dd($user->email);
-        Appointment::create($appointment_validate);
-
-        //dispatch mail
+        // Prepare email data
+        $mailData = [
+            'title' => 'Hospital Appointment',
+            'body' => 'Your appointment has been booked successfully!',
+            'patient_email' => $user->email,
+            'doctor_email' =>  $doctor_email,
+            'doctor_name' => $doctor_name,
+            'patient_name' => $user->name,
+        ];
+        // dd(1);
+        // Dispatch email job
         dispatch(new SendAppointmentMailJob($mailData));
+
         return redirect()->route('patient.dashboard')->with('status', [
-            'message' => 'Appointment booked sucessfully',
+            'message' => 'Appointment booked successfully',
             'type' => 'success'
         ]);
     }
+
 
     /**
      * Display the specified resource.

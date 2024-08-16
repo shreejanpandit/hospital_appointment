@@ -14,8 +14,6 @@ use Illuminate\Support\Facades\Storage;
 
 class DoctorController extends Controller
 {
-
-
     /**
      * Display a listing of the resource.
      */
@@ -95,64 +93,35 @@ class DoctorController extends Controller
         ]);
     }
 
-
-
-    public function showSchedule()
+    public function findDoctor(Request $request)
     {
-        $user = Auth::user();
-        $doctorId = $user->doctor->id;
-
-        // Define the days of the week
-        $weekDays = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-
-        // Fetch the existing schedule for the doctor
-        $schedules = Schedule::where('doctor_id', $doctorId)
-            ->get()
-            ->keyBy('week_day');
-
-        // Prepare data to pass to the view
-        $scheduleData = [];
-        foreach ($weekDays as $day) {
-            $scheduleData[$day . '_start_time'] = $schedules->get($day)->start_time ?? '';
-            $scheduleData[$day . '_end_time'] = $schedules->get($day)->end_time ?? '';
-        }
-
-        return view('doctor.schedule', [
-            'weekDays' => $weekDays,
-            'schedule' => $scheduleData
-        ]);
-    }
-
-    public function updateSchedule(Request $request)
-    {
-        $user = Auth::user();
-        $doctorId = $user->doctor->id;
+        $department_id = $request->input('department_id');
+        $department_doctors = Doctor::where('department_id', $department_id)->get();
 
         $weekDays = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 
-        foreach ($weekDays as $day) {
-            $startTime = $request->input("{$day}_start_time");
-            $endTime = $request->input("{$day}_end_time");
+        $schedules = [];
+        foreach ($department_doctors as $doctor) {
+            $doctorSchedules = Schedule::where('doctor_id', $doctor->id)->get();
+            $scheduleData = [];
 
-            if ($startTime && $endTime) {
-                Schedule::updateOrCreate(
-                    [
-                        'doctor_id' => $doctorId,
-                        'week_day' => $day
-                    ],
-                    [
-                        'start_time' => $startTime,
-                        'end_time' => $endTime
-                    ]
-                );
+            foreach ($weekDays as $day) {
+                $daySchedule = $doctorSchedules->where('week_day', $day)->first();
+                $scheduleData[$day . '_start_time'] = $daySchedule ? $daySchedule->start_time->format('H:i A') : '';
+                $scheduleData[$day . '_end_time'] = $daySchedule ? $daySchedule->end_time->format('H:i A') : '';
             }
+
+            $schedules[$doctor->id] = $scheduleData;
         }
 
-        return redirect()->route('doctor.schedule')->with('status', [
-            'message' => 'Schedule updated successfully',
-            'type' => 'success'
+        return view('doctor.show', [
+            'department_doctors' => $department_doctors,
+            'schedules' => $schedules,
+            'patient_id' => $request->input('patient_id'),
+            'department_id' => $department_id,
         ]);
     }
+
 
     /**
      * Display the specified resource.

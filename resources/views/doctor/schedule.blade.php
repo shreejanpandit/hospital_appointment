@@ -12,6 +12,7 @@
                     <form method="POST" action="{{ route('doctor.schedule.update') }}">
                         @csrf
                         <div class="space-y-4">
+                            {{-- @dd($schedule) --}}
                             @foreach ($weekDays as $day)
                                 <div>
                                     <x-input-label :value="__($day)" />
