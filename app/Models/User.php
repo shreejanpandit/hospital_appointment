@@ -33,6 +33,10 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    public function hasRole($role)
+    {
+        return $this->role === $role;
+    }
     /**
      * Get the attributes that should be cast.
      *

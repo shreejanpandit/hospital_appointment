@@ -67,19 +67,19 @@ class ScheduleController extends Controller
     {
         //
     }
-    public function getSchedules($doctorId)
-    {
-        $schedules = Schedule::with('doctor')
-            ->where('doctor_id', $doctorId)
-            ->get();
-        // $schedules = Schedule::where('doctor_id', $doctorId)
-        //     ->get()
-        //     ->groupBy(function ($date) {
-        //         return $date->start_time->format('l'); // Group by weekday
-        //     });
+    // public function getSchedules($doctorId)
+    // {
+    //     $schedules = Schedule::with('doctor')
+    //         ->where('doctor_id', $doctorId)
+    //         ->get();
+    //     // $schedules = Schedule::where('doctor_id', $doctorId)
+    //     //     ->get()
+    //     //     ->groupBy(function ($date) {
+    //     //         return $date->start_time->format('l'); // Group by weekday
+    //     //     });
 
-        return response()->json($schedules);
-    }
+    //     return response()->json($schedules);
+    // }
 
     /**
      * Update the specified resource in storage.
