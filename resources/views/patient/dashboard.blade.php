@@ -17,9 +17,9 @@
             <!-- Profile Section -->
             <h1 class="text-xl font-bold mb-4">Hello , {{ Auth::user()->name }} your upcoming appointments</h1>
 
-
+            {{-- @dd($appointments) --}}
             <!-- Appointments Section -->
-            <div class="bg-white dark:bg-gray-800 shadow-md overflow-hidden sm:rounded-lg">
+            <div class="bg-gray-100 dark:bg-gray-800 ">
                 @if ($appointments->isEmpty())
                     <p class="text-center text-gray-500 py-4">No upcoming schedule</p>
                 @else
@@ -30,11 +30,14 @@
                                 $time = \Carbon\Carbon::parse($appointment->time);
                             @endphp
                             <li
-                                class="px-4 py-4 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-300 ">
+                                class="px-4 py-4 bg-white dark:bg-gray-800 border border-transparent dark:border-transparent hover:border-cyan-500 dark:hover:border-cyan-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 mb-4">
                                 <div class="flex items-center justify-between">
                                     <div>
                                         <p class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1">
-                                            {{ $appointment->description }}
+                                            Dr. {{ $appointment->doctor->user->name }}
+                                        </p>
+                                        <p class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1">
+                                            Description: {{ $appointment->description }}
                                         </p>
                                         <p class="text-sm text-gray-500 dark:text-gray-400">
                                             {{ $date->format('F j, Y') }} at {{ $time->format('g:i A') }}
@@ -50,6 +53,8 @@
                             </li>
                         @endforeach
                     </ul>
+
+
                 @endif
             </div>
         </div>

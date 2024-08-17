@@ -27,7 +27,7 @@ class AppointmentStoreRequest extends FormRequest
             'doctor_id' => 'required|integer|exists:doctors,id',
             'description' => 'required|string|max:255',
             'date' => 'required|date|after_or_equal:today',
-            'time' => 'required|date_format:H:i'
+            // 'time' => 'required|date_format:H:i'
         ];
     }
 }

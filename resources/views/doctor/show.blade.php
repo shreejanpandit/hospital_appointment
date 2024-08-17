@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex justify-between items-center">
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                Schedule New Appointment
+                Select doctor of your choice in the list available below
             </h2>
         </div>
     </x-slot>
@@ -13,7 +13,7 @@
                 <div class="p-6 text-gray-900 dark:text-gray-100">
 
                     <!-- Doctor Cards -->
-                    <form action="{{ route('appointment.store') }}" method="POST">
+                    <form action="{{ route('doctor.schedule.find') }}" method="POST">
                         @csrf
                         <input type="hidden" name="patient_id" value="{{ $patient_id }}">
                         <input type="hidden" name="department_id" value="{{ $department_id }}">
@@ -22,64 +22,33 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             @foreach ($department_doctors as $doctor)
                                 <div id="doctor_card_{{ $doctor->id }}"
-                                    class="doctor-card bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-4 shadow-md cursor-pointer"
+                                    class="doctor-card bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-4 shadow-md cursor-pointer flex items-start gap-4"
                                     data-doctor-id="{{ $doctor->id }}">
-                                    <h3 class="text-lg font-semibold">{{ $doctor->user->name }}</h3>
-                                    <p class="text-sm text-gray-600 dark:text-gray-400">{{ $doctor->department->name }}
-                                    </p>
 
-                                    <!-- Schedule Details -->
-                                    <div class="mt-4">
-                                        @foreach (['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'] as $day)
-                                            <div class="mb-2">
-                                                <span class="font-medium">{{ ucfirst($day) }}:</span>
-                                                @if (!empty($schedules[$doctor->id][$day . '_start_time']))
-                                                    <span>
-                                                        <strong class="text-green-500">
-                                                            {{ $schedules[$doctor->id][$day . '_start_time'] }}</strong>
-                                                        -
-                                                        <strong class="text-red-500">
-                                                            {{ $schedules[$doctor->id][$day . '_end_time'] }}</strong>
-                                                    </span>
-                                                @else
-                                                    <span>No available time</span>
-                                                @endif
-                                            </div>
-                                        @endforeach
+                                    <!-- Image Section -->
+                                    <img src="{{ $doctor->image ? asset('uploads_doctor/' . $doctor->image) : asset('uploads_doctor/default_image.png') }}"
+                                        alt="Profile Image" class="w-24 h-24 object-cover rounded-full">
+
+                                    <!-- Text Content Section -->
+                                    <div class="flex-1">
+                                        <h3 class="text-lg font-semibold mb-1">Dr. {{ $doctor->user->name }}</h3>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                                            {{ $doctor->department->name }}</p>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">{{ $doctor->contact }}
+                                        </p>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">{{ $doctor->bio }}</p>
                                     </div>
                                 </div>
                             @endforeach
                         </div>
 
-                        <!-- Description -->
-                        <div class="mt-4">
-                            <x-input-label for="description" :value="__('Description')" />
-                            <x-text-input id="description" class="block mt-1 w-full" type="text" name="description"
-                                :value="old('description')" />
-                            <x-input-error :messages="$errors->get('description')" class="mt-2" />
-                        </div>
-
-                        <!-- Date -->
-                        <div class="mt-4">
-                            <x-input-label for="date" :value="__('Date')" />
-                            <x-text-input id="date" class="block mt-1 w-full" type="date" name="date"
-                                :value="old('date')" />
-                            <x-input-error :messages="$errors->get('date')" class="mt-2" />
-                        </div>
-
-                        <!-- Time -->
-                        <div class="mt-4">
-                            <x-input-label for="time" :value="__('Time')" />
-                            <x-text-input id="time" class="block mt-1 w-full" type="time" name="time"
-                                :value="old('time')" />
-                            <x-input-error :messages="$errors->get('time')" class="mt-2" />
-                        </div>
-
                         <!-- Book Appointment Button -->
                         <div class="flex items-center justify-end">
-                            <x-primary-button class="ms-4 mt-4">
-                                Book Appointment
-                            </x-primary-button>
+                            <button id="book-appointment-btn"
+                                class="ms-4 mt-4 inline-flex items-center px-4 py-2 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150"
+                                disabled>
+                                Check Schedule
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -102,7 +71,8 @@
 
                 // Add selected class to the clicked card
                 this.classList.add('selected-card');
-
+                // Enable the button if a card is selected
+                document.getElementById('book-appointment-btn').disabled = false;
                 // Set the hidden input field with the selected doctor's ID
                 document.getElementById('selected_doctor_id').value = this.getAttribute('data-doctor-id');
             });

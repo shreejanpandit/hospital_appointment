@@ -29,12 +29,12 @@ class AppointmentController extends Controller
     public function create()
     {
         $userPatient = Auth::user()->patient;
-        $doctors = Doctor::all();
+        // $doctors = Doctor::all();
         $departments = Department::with('doctors')->get();
 
         return view('appointment.create', [
             'patient' => $userPatient,
-            'doctors' => $doctors,
+            // 'doctors' => $doctors,
             'departments' => $departments
         ]);
     }

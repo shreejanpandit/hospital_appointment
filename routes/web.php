@@ -41,6 +41,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/doctor/schedule', [ScheduleController::class, 'index'])->name('doctor.schedule');
     Route::post('/doctor/schedule/update', [ScheduleController::class, 'update'])->name('doctor.schedule.update');
     Route::get('/schedules/{doctorId}', [ScheduleController::class, 'getSchedules'])->name('schedules.get');
+    Route::post('/doctor/schedule/find', [DoctorController::class, 'findDoctorsSchedule'])->name('doctor.schedule.find');
+
 });
 
 
