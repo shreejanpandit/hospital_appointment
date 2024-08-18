@@ -23,7 +23,6 @@
 
                     <!-- Appointments Sections -->
                     <div class="space-y-8">
-
                         <!-- Today's Appointments -->
                         <div>
                             <h2 class="text-2xl font-semibold mb-4">Today's Appointments:</h2>
@@ -33,6 +32,7 @@
                                 <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                                     @foreach ($todayAppointments as $appointment)
                                         <div class="bg-white dark:bg-gray-900 shadow-md rounded-lg overflow-hidden">
+
                                             <div class="p-4">Patient:
                                                 <span class="text-xl font-semibold mb-2">
                                                     {{ $appointment->patient->user->name }}
@@ -40,9 +40,10 @@
                                                 <p class="text-gray-600 dark:text-gray-400">Date:
                                                     {{ $appointment->date->format('Y-m-d') }}</p>
                                                 <p class="text-gray-600 dark:text-gray-400">Time:
-                                                    {{ $appointment->time }}</p>
-                                                <p class="text-gray-800 dark:text-gray-300 mt-2">
-                                                    {{ $appointment->details }}</p>
+                                                    {{ \Carbon\Carbon::parse($appointment->time)->format('g:i A') }}
+                                                </p>
+                                                <p class="text-gray-800 dark:text-gray-300 ">
+                                                    Description: {{ $appointment->description }}</p>
                                             </div>
                                             {{-- <div class="bg-gray-100 dark:bg-gray-800 px-4 py-2 text-right">
                                                 <a href="{{ route('appointment.show', $appointment->id) }}" class="text-blue-500 hover:underline">View Details</a>
@@ -63,20 +64,23 @@
                                     @foreach ($upcomingAppointments as $appointment)
                                         <div class="bg-white dark:bg-gray-900 shadow-md rounded-lg overflow-hidden">
                                             <div class="p-4">
-                                                Patient:
+                                                <b> Patient:</b>
                                                 <span class="text-xl font-semibold mb-2">
                                                     {{ $appointment->patient->user->name }}
                                                 </span>
-                                                <p class="text-gray-600 dark:text-gray-400">Date:
+                                                <p class="text-gray-600 dark:text-gray-400"><b>Date:</b>
                                                     {{ $appointment->date->format('Y-m-d') }}</p>
-                                                <p class="text-gray-600 dark:text-gray-400">Time:
-                                                    {{ $appointment->time }}</p>
-                                                <p class="text-gray-800 dark:text-gray-300 mt-2">
-                                                    {{ $appointment->details }}</p>
+                                                <p class="text-gray-600 dark:text-gray-400"><b>Time:</b>
+                                                    {{ \Carbon\Carbon::parse($appointment->time)->format('g:i A') }}
+                                                </p>
+                                                <p class="text-gray-800 dark:text-gray-300 ">
+                                                    <b>Description:</b> {{ $appointment->description }}
+                                                </p>
                                             </div>
-                                            {{-- <div class="bg-gray-100 dark:bg-gray-800 px-4 py-2 text-right">
-                                                <a href="{{ route('appointment.show', $appointment->id) }}" class="text-blue-500 hover:underline">View Details</a>
-                                            </div> --}}
+                                            <div class="bg-gray-100 dark:bg-gray-800 px-4 py-2 text-right">
+                                                <a href="{{ route('appointment.reshedule', $appointment->id) }}"
+                                                    class="text-blue-500 hover:underline">Reshedule</a>
+                                            </div>
                                         </div>
                                     @endforeach
                                 </div>
@@ -93,16 +97,18 @@
                                     @foreach ($previousAppointments as $appointment)
                                         <div class="bg-white dark:bg-gray-900 shadow-md rounded-lg overflow-hidden">
                                             <div class="p-4">
-                                                Patient:
+                                                <b> Patient:</b>
                                                 <span class="text-xl font-semibold mb-2">
                                                     {{ $appointment->patient->user->name }}
                                                 </span>
-                                                <p class="text-gray-600 dark:text-gray-400">Date:
+                                                <p class="text-gray-600 dark:text-gray-400"><b>Date:</b>
                                                     {{ $appointment->date->format('Y-m-d') }}</p>
-                                                <p class="text-gray-600 dark:text-gray-400">Time:
-                                                    {{ $appointment->time }}</p>
-                                                <p class="text-gray-800 dark:text-gray-300 mt-2">
-                                                    {{ $appointment->details }}</p>
+                                                <p class="text-gray-600 dark:text-gray-400"><b>Time:</b>
+                                                    {{ \Carbon\Carbon::parse($appointment->time)->format('g:i A') }}
+                                                </p>
+                                                <p class="text-gray-800 dark:text-gray-300 ">
+                                                    <b>Description:</b> {{ $appointment->description }}
+                                                </p>
                                             </div>
                                             {{-- <div class="bg-gray-100 dark:bg-gray-800 px-4 py-2 text-right">
                                                 <a href="{{ route('appointment.show', $appointment->id) }}" class="text-blue-500 hover:underline">View Details</a>

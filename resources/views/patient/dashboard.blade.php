@@ -4,22 +4,70 @@
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                 {{ __('Patient Dashboard') }}
             </h2>
-            <a href="{{ route('appointment.create') }}" class="text-blue-500 hover:underline">
-                Add Appointment
-            </a>
+            <!-- Aligning the content to the right -->
+            <div class="ml-auto flex items-center space-x-4">
+                <a href="{{ route('appointment.create') }}" class="text-blue-500 hover:underline">
+                    Add Appointment
+                </a>
+
+                <!-- Notification Dropdown -->
+                <div class="hidden sm:flex sm:items-center">
+                    <x-dropdown align="right" width="50">
+                        <x-slot name="trigger">
+                            <button
+                                class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
+                                <div>Notification</div>
+                            </button>
+                        </x-slot>
+
+                        <x-slot name="content">
+                            <!-- Notifications Section -->
+
+                            @if ($notifications->isNotEmpty())
+                                <div
+                                    class="bg-yellow-100 dark:bg-yellow-900 border border-yellow-300 dark:border-yellow-700 rounded-md p-4 max-h-80 overflow-y-auto w-80">
+                                    <div class="font-semibold">Appointment Rescheduled</div>
+                                    <hr>
+
+                                    <ul class="mt-2">
+                                        @foreach ($notifications->take(3) as $notification)
+                                            <li class="mb-2">
+                                                <p>
+                                                    Your appointment with Dr.
+                                                    {{ $notification->data['doctor_name'] ?? 'Unknown Doctor' }}
+                                                    has been rescheduled to
+                                                    {{ $notification->data['appointment_date'] ?? 'Unknown Date' }}
+                                                    at {{ $notification->data['appointment_time'] ?? 'Unknown Time' }}.
+                                                </p>
+                                                <small
+                                                    class="text-gray-500 dark:text-gray-400">{{ $notification->created_at->diffForHumans() }}</small>
+                                                <hr>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @else
+                                <p class="p-4 text-gray-500 dark:text-gray-400">No new notifications.</p>
+                            @endif
+                        </x-slot>
+                    </x-dropdown>
+                </div>
+
+            </div>
         </div>
     </x-slot>
+
 
     <x-flash-message />
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <!-- Profile Section -->
-            <h1 class="text-xl font-bold mb-4">Hello , {{ Auth::user()->name }} your upcoming appointments</h1>
 
-            {{-- @dd($appointments) --}}
+            <!-- Profile Section -->
+            <h1 class="text-xl font-bold mb-4">Hello, {{ Auth::user()->name }}. Your upcoming appointments:</h1>
+
             <!-- Appointments Section -->
-            <div class="bg-gray-100 dark:bg-gray-800 ">
+            <div class="bg-gray-100 dark:bg-gray-800">
                 @if ($appointments->isEmpty())
                     <p class="text-center text-gray-500 py-4">No upcoming schedule</p>
                 @else
@@ -48,13 +96,11 @@
                                             class="inline-block px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">
                                             Details
                                         </a>
-
-                                        <a href="{{ route('appointment.show', $appointment->id) }}"
+                                        <a href="{{ route('appointment.edit', $appointment->id) }}"
                                             class="inline-block px-4 py-2 text-white bg-gray-500 rounded hover:bg-gray-600">
                                             Edit
                                         </a>
-
-                                        <form action="{{ route('appointment.cancle', $appointment->id) }}"
+                                        <form action="{{ route('appointment.cancel', $appointment->id) }}"
                                             method="POST" onsubmit="return confirmCancel()">
                                             @csrf
                                             @method('DELETE')
@@ -64,17 +110,15 @@
                                             </button>
                                         </form>
                                     </div>
-
                                 </div>
                             </li>
                         @endforeach
                     </ul>
-
-
                 @endif
             </div>
         </div>
     </div>
+
     <script>
         function confirmCancel() {
             return confirm(
