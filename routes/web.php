@@ -26,6 +26,7 @@ Route::middleware(['auth', 'role:patient'])->group(function () {
     Route::get('/appointment', [AppointmentController::class, 'create'])->name('appointment.create');
     Route::post('/appointment', [AppointmentController::class, 'store'])->name('appointment.store');
     Route::get('/appointments/{id}', [AppointmentController::class, 'show'])->name('appointment.show');
+    Route::delete('/appointments/{appointment}', [AppointmentController::class, 'destroy'])->name('appointment.cancle');
     // Route::get('/available-slots', [AppointmentController::class, 'getAvailableSlots'])->name('available.slots');
 });
 

@@ -43,12 +43,28 @@
                                             {{ $date->format('F j, Y') }} at {{ $time->format('g:i A') }}
                                         </p>
                                     </div>
-                                    <div>
+                                    <div class="flex space-x-2">
                                         <a href="{{ route('appointment.show', $appointment->id) }}"
-                                            class="text-blue-500 hover:underline">
-                                            View Details
+                                            class="inline-block px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">
+                                            Details
                                         </a>
+
+                                        <a href="{{ route('appointment.show', $appointment->id) }}"
+                                            class="inline-block px-4 py-2 text-white bg-gray-500 rounded hover:bg-gray-600">
+                                            Edit
+                                        </a>
+
+                                        <form action="{{ route('appointment.cancle', $appointment->id) }}"
+                                            method="POST" onsubmit="return confirmCancel()">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit"
+                                                class="inline-block px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600">
+                                                Cancel
+                                            </button>
+                                        </form>
                                     </div>
+
                                 </div>
                             </li>
                         @endforeach
@@ -59,4 +75,11 @@
             </div>
         </div>
     </div>
+    <script>
+        function confirmCancel() {
+            return confirm(
+                "Are you sure you want to cancel this appointment? This action cannot be undone and will permanently remove the appointment. Click 'Cancel' to go back or 'OK' to proceed."
+            );
+        }
+    </script>
 </x-app-layout>

@@ -113,6 +113,15 @@ class AppointmentController extends Controller
      */
     public function destroy(Appointment $appointment)
     {
-        //
+        $doctorName = $appointment->doctor->user->name;
+        $appointmentDate = $appointment->date->format('F j, Y');
+
+        $appointment->delete();
+
+        // Redirect with a success message
+        return redirect()->route('patient.dashboard')->with('status', [
+            'message' => 'Appointment with Dr. ' . $doctorName . ' scheduled for ' . $appointmentDate . ' has been canceled successfully.',
+            'type' => 'failure'
+        ]);
     }
 }
