@@ -17,12 +17,18 @@ class DoctorController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $doctors = Doctor::all();
-        // dd($doctors);
-        return view('doctor.index', ['doctors' => $doctors]);
+        $perPage = 10;
+        $doctors = Doctor::paginate($perPage);
+
+        return view('doctor.index', [
+            'doctors' => $doctors,
+            'perPage' => $perPage,
+            'currentPage' => $request->input('page', 1),
+        ]);
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -253,8 +259,9 @@ class DoctorController extends Controller
 
     public function search(Request $request)
     {
-        $searchTerm = $request->input('search');
 
+        $searchTerm = $request->input('search');
+        $perPage = 10;
         // Example of querying doctors based on the search term
         $doctors = Doctor::with(['user', 'department'])
             ->WhereHas('user', function ($query) use ($searchTerm) {
@@ -264,10 +271,18 @@ class DoctorController extends Controller
                 $query->where('name', 'like', "%{$searchTerm}%");
             })
             ->orWhere('bio', 'like', "%{$searchTerm}%")
-            ->get();
+            ->paginate($perPage);
 
 
 
-        return view('doctor.index', ['doctors' => $doctors]);
+        return view(
+            'doctor.index',
+            [
+                'doctors' => $doctors,
+                'search' => $searchTerm,
+                'perPage' => $perPage,
+                'currentPage' => $request->input('page', 1),
+            ]
+        );
     }
 }

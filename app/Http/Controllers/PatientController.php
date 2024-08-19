@@ -18,7 +18,7 @@ class PatientController extends Controller
      */
     public function index()
     {
-        $patients = Patient::all();
+        $patients = Patient::paginate(10);
         return view('patient.index', ['patients' => $patients]);
     }
 
@@ -196,6 +196,6 @@ class PatientController extends Controller
             ->get();
 
 
-        return view('patient.index', ['patients' => $patients]);
+        return view('patient.index', ['patients' => $patients, 'search' => $searchTerm]);
     }
 }

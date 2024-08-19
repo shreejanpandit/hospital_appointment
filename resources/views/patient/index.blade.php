@@ -13,7 +13,7 @@
                 @csrf
                 <input id="search"
                     class="w-80 border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                    type="search" name="search" placeholder="Search Patient" autocomplete="off" />
+                    type="search" name="search" value="{{ isset($search) ? $search : '' }}" placeholder="Search Patient" autocomplete="off" />
                 <x-input-error :messages="$errors->get('search')" class="mt-2 text-red-600" />
             </form>
         </div>
