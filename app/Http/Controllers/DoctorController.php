@@ -250,4 +250,25 @@ class DoctorController extends Controller
             'type' => 'failure'
         ]);
     }
+
+    public function search(Request $request)
+    {
+        $searchTerm = $request->input('search');
+
+        // Example of querying doctors based on the search term
+        $doctors = Doctor::with(['user', 'department'])
+            ->where('name', 'like', "%{$searchTerm}%")
+            ->orWhere(function ($query) use ($searchTerm) {
+                $query->whereHas('user', function ($query) use ($searchTerm) {
+                    $query->where('name', 'like', "%{$searchTerm}%");
+                })
+                    ->orWhereHas('department', function ($query) use ($searchTerm) {
+                        $query->where('name', 'like', "%{$searchTerm}%");
+                    });
+            })
+            ->orWhere('bio', 'like', "%{$searchTerm}%")
+            ->get();
+
+        return view('doctor.index', ['doctors' => $doctors]);
+    }
 }

@@ -22,7 +22,7 @@ Route::get('/dashboard', function () {
 require __DIR__ . '/auth.php';
 
 // Patient Routes
-Route::middleware(['auth', 'role:patient|admin'])->group(function () {
+Route::middleware(['auth', 'role:patient'])->group(function () {
     Route::get('/patient/dashboard', [PatientController::class, 'dashboard'])->name('patient.dashboard');
     Route::get('/appointment', [AppointmentController::class, 'create'])->name('appointment.create');
     Route::post('/appointment', [AppointmentController::class, 'store'])->name('appointment.store');
@@ -33,7 +33,7 @@ Route::middleware(['auth', 'role:patient|admin'])->group(function () {
 });
 
 // Doctor Routes
-Route::middleware(['auth', 'role:doctor|admin'])->group(function () {
+Route::middleware(['auth', 'role:doctor'])->group(function () {
     Route::get('/doctor/dashboard', [DoctorController::class, 'dashboard'])->name('doctor.dashboard');
     Route::get('/doctor/schedule', [ScheduleController::class, 'index'])->name('doctor.schedule');
     Route::post('/doctor/schedule/update', [ScheduleController::class, 'update'])->name('doctor.schedule.update');
@@ -57,6 +57,8 @@ Route::middleware('auth')->group(function () {
     Route::patch('patient/{id}', [PatientController::class, 'update'])->name('patient.update');
     Route::post('patient', [PatientController::class, 'store'])->name('patient.store');
     Route::get('patient/create', [PatientController::class, 'create'])->name('patient.create');
+    Route::get('/doctors/search', [DoctorController::class, 'search'])->name('doctor.search');
+    Route::get('/patients/search', [PatientController::class, 'search'])->name('patient.search');
 });
 
 // Admin Routes 

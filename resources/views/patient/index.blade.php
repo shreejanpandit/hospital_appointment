@@ -5,11 +5,17 @@
         </h2>
     </x-slot>
     <x-slot name="header">
-        <div class="flex justify-between">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight inline-block">
-                Patient Information
+        <div class="flex justify-between items-center">
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                Patients Information
             </h2>
-            {{-- <a href="{{ route('patient.create') }}" style="color:blue"> Create Patient</a> --}}
+            <form action="{{ route('patient.search') }}" method="GET" class="flex items-center space-x-4">
+                @csrf
+                <input id="search"
+                    class="w-80 border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                    type="search" name="search" placeholder="Search Patient" autocomplete="off" />
+                <x-input-error :messages="$errors->get('search')" class="mt-2 text-red-600" />
+            </form>
         </div>
     </x-slot>
 
