@@ -56,10 +56,10 @@
                                     Image
                                 </th>
 
-                                <th
+                                {{-- <th
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                     Created At
-                                </th>
+                                </th> --}}
 
                                 <th
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
@@ -88,13 +88,14 @@
                                         {{ $doctor->bio }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                        <img src="{{ asset('uploads_doctor/' . $doctor->image) }}" alt="Profile Image"
-                                            class="w-16 h-16 object-cover">
+                                        <img src="{{ asset('uploads_doctor/' . ($doctor->image ?: 'default_image.png')) }}"
+                                            alt="Profile Image" class="w-16 h-16 object-cover">
                                     </td>
 
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+
+                                    {{-- <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                                         {{ $doctor->created_at }}
-                                    </td>
+                                    </td> --}}
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                                         <!-- Edit Button -->
                                         <a href="{{ route('doctor.edit', $doctor->id) }}"

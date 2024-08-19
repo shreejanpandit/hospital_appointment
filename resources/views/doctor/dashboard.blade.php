@@ -31,23 +31,25 @@
                             @else
                                 <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                                     @foreach ($todayAppointments as $appointment)
-                                        <div class="bg-white dark:bg-gray-900 shadow-md rounded-lg overflow-hidden">
-
-                                            <div class="p-4">Patient:
-                                                <span class="text-xl font-semibold mb-2">
-                                                    {{ $appointment->patient->user->name }}
-                                                </span>
-                                                <p class="text-gray-600 dark:text-gray-400">Date:
+                                        <div
+                                            class="bg-white dark:bg-gray-900 shadow-md rounded-lg overflow-hidden flex flex-col">
+                                            <div class="p-4 flex-grow">
+                                                <div>
+                                                    <b>Patient:</b>
+                                                    <span
+                                                        class="text-xl font-semibold mb-2">{{ $appointment->patient->user->name }}</span>
+                                                </div>
+                                                <p class="text-gray-600 dark:text-gray-400"><b>Date:</b>
                                                     {{ $appointment->date->format('Y-m-d') }}</p>
-                                                <p class="text-gray-600 dark:text-gray-400">Time:
-                                                    {{ \Carbon\Carbon::parse($appointment->time)->format('g:i A') }}
-                                                </p>
-                                                <p class="text-gray-800 dark:text-gray-300 ">
-                                                    Description: {{ $appointment->description }}</p>
+                                                <p class="text-gray-600 dark:text-gray-400"><b>Time:</b>
+                                                    {{ \Carbon\Carbon::parse($appointment->time)->format('g:i A') }}</p>
+                                                <p class="text-gray-800 dark:text-gray-300"><b>Description:</b>
+                                                    {{ $appointment->description }}</p>
                                             </div>
-                                            {{-- <div class="bg-gray-100 dark:bg-gray-800 px-4 py-2 text-right">
-                                                <a href="{{ route('appointment.show', $appointment->id) }}" class="text-blue-500 hover:underline">View Details</a>
-                                            </div> --}}
+                                            <div class="bg-gray-100 dark:bg-gray-800 px-4 py-2 text-right">
+                                                <a href="{{ route('appointment.reshedule', $appointment->id) }}"
+                                                    class="text-blue-500 hover:underline">Reschedule</a>
+                                            </div>
                                         </div>
                                     @endforeach
                                 </div>
@@ -62,30 +64,32 @@
                             @else
                                 <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                                     @foreach ($upcomingAppointments as $appointment)
-                                        <div class="bg-white dark:bg-gray-900 shadow-md rounded-lg overflow-hidden">
-                                            <div class="p-4">
-                                                <b> Patient:</b>
-                                                <span class="text-xl font-semibold mb-2">
-                                                    {{ $appointment->patient->user->name }}
-                                                </span>
+                                        <div
+                                            class="bg-white dark:bg-gray-900 shadow-md rounded-lg overflow-hidden flex flex-col">
+                                            <div class="p-4 flex-grow">
+                                                <div>
+                                                    <b>Patient:</b>
+                                                    <span
+                                                        class="text-xl font-semibold mb-2">{{ $appointment->patient->user->name }}</span>
+                                                </div>
                                                 <p class="text-gray-600 dark:text-gray-400"><b>Date:</b>
                                                     {{ $appointment->date->format('Y-m-d') }}</p>
                                                 <p class="text-gray-600 dark:text-gray-400"><b>Time:</b>
                                                     {{ \Carbon\Carbon::parse($appointment->time)->format('g:i A') }}
                                                 </p>
-                                                <p class="text-gray-800 dark:text-gray-300 ">
-                                                    <b>Description:</b> {{ $appointment->description }}
-                                                </p>
+                                                <p class="text-gray-800 dark:text-gray-300"><b>Description:</b>
+                                                    {{ $appointment->description }}</p>
                                             </div>
                                             <div class="bg-gray-100 dark:bg-gray-800 px-4 py-2 text-right">
                                                 <a href="{{ route('appointment.reshedule', $appointment->id) }}"
-                                                    class="text-blue-500 hover:underline">Reshedule</a>
+                                                    class="text-blue-500 hover:underline">Reschedule</a>
                                             </div>
                                         </div>
                                     @endforeach
                                 </div>
                             @endif
                         </div>
+
 
                         <!-- Previous Appointments -->
                         <div class="mt-4">

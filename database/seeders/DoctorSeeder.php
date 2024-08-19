@@ -60,10 +60,10 @@ class DoctorSeeder extends Seeder
 
         // Seed doctors and schedules
         foreach ($departmentIds as $departmentName => $departmentId) {
-            for ($i = 1; $i <= 4; $i++) {
+            for ($i = 1; $i <= 2; $i++) {
                 $userId = DB::table('users')->insertGetId([
-                    'name' => "Doctor $departmentName $i",
-                    'email' => "doctor$departmentId$i@example.com",
+                    'name' => fake()->name(),
+                    'email' => fake()->email(),
                     'role' => 'doctor',
                     'password' => Hash::make('password'),
                 ]);

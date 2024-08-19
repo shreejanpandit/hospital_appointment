@@ -6,9 +6,11 @@
             </h2>
             <!-- Aligning the content to the right -->
             <div class="ml-auto flex items-center space-x-4">
-                <a href="{{ route('appointment.create') }}" class="text-blue-500 hover:underline">
-                    Add Appointment
-                </a>
+                @if (Auth::user()->patient->id)
+                    <a href="{{ route('appointment.create') }}" class="text-blue-500 hover:underline">
+                        Add Appointment
+                    </a>
+                @endif
 
                 <!-- Notification Dropdown -->
                 <div class="hidden sm:flex sm:items-center">
