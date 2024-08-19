@@ -188,14 +188,13 @@ class PatientController extends Controller
         $searchTerm = $request->input('search');
 
         $patients = Patient::with('user')
-            ->where(function ($query) use ($searchTerm) {
-                $query->where('gender', 'like', "%{$searchTerm}%")
-                    ->orWhereHas('user', function ($query) use ($searchTerm) {
-                        $query->where('name', 'like', "%{$searchTerm}%")
-                            ->orWhere('email', 'like', "%{$searchTerm}%");
-                    });
+            ->where('gender', 'like', "%{$searchTerm}%")
+            ->orWhereHas('user', function ($query) use ($searchTerm) {
+                $query->where('name', 'like', "%{$searchTerm}%")
+                    ->orWhere('email', 'like', "%{$searchTerm}%");
             })
             ->get();
+
 
         return view('patient.index', ['patients' => $patients]);
     }

@@ -257,8 +257,7 @@ class DoctorController extends Controller
 
         // Example of querying doctors based on the search term
         $doctors = Doctor::with(['user', 'department'])
-            ->where('name', 'like', "%{$searchTerm}%")
-            ->orWhere(function ($query) use ($searchTerm) {
+            ->Where(function ($query) use ($searchTerm) {
                 $query->whereHas('user', function ($query) use ($searchTerm) {
                     $query->where('name', 'like', "%{$searchTerm}%");
                 })
@@ -268,6 +267,7 @@ class DoctorController extends Controller
             })
             ->orWhere('bio', 'like', "%{$searchTerm}%")
             ->get();
+
 
         return view('doctor.index', ['doctors' => $doctors]);
     }
