@@ -44,6 +44,12 @@ class AuthenticatedSessionController extends Controller
                     'type' => 'success'
                 ]);
             }
+            if ($user === 'admin') {
+                return redirect()->route('admin.dashboard')->with('status', [
+                    'message' => 'Admin Login sucessfully',
+                    'type' => 'success'
+                ]);
+            }
         } else return "error";
     }
 

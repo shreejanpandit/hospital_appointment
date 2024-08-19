@@ -19,7 +19,9 @@ class DoctorController extends Controller
      */
     public function index()
     {
-        //
+        $doctors = Doctor::all();
+        // dd($doctors);
+        return view('doctor.index', ['doctors' => $doctors]);
     }
 
     /**
@@ -163,9 +165,48 @@ class DoctorController extends Controller
      */
     public function edit(Doctor $doctor)
     {
-        //
+        $departments = Department::all();
+        return view('doctor.edit', compact('doctor', 'departments'));
     }
 
+    public function adminDoctorUpdate(Doctor $doctor, Request $request)
+    {
+        // Validate the incoming request data
+        $test =   $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'contact' => 'required|string',
+            'bio' => 'required|string|max:255',
+            'department_id' => 'required|exists:departments,id',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+        // dd($test);
+
+        $doctor->user->name = $validatedData['name'];
+
+        $doctor->contact = $validatedData['contact'];
+        $doctor->bio = $validatedData['bio'];
+        $doctor->department_id = $validatedData['department_id'];
+
+        // // Handle file upload
+        if ($request->hasFile('image')) {
+            if ($doctor->image && Storage::exists('public/uploads_doctor/' . $doctor->image)) {
+                Storage::delete('public/uploads_doctor/' . $doctor->image);
+            }
+
+            $imagePath = $request->file('image')->store('uploads_doctor', 'public');
+            $doctor->image = basename($imagePath);
+        }
+
+        $doctor->user->save();
+
+        $doctor->save();
+
+        // // Redirect back with success message
+        return redirect()->back()->with('status', [
+            'message' => 'Doctor updated successfully',
+            'type' => 'success'
+        ]);
+    }
     /**
      * Update the specified resource in storage.
      */
@@ -202,6 +243,11 @@ class DoctorController extends Controller
      */
     public function destroy(Doctor $doctor)
     {
-        //
+        $doctorName = $doctor->user->name;
+        $doctor->delete();
+        return redirect()->route('doctor.index')->with('status', [
+            'message' =>  'Dr.' . $doctorName .  ' has been deleted successfully.',
+            'type' => 'failure'
+        ]);
     }
 }

@@ -18,7 +18,8 @@ class PatientController extends Controller
      */
     public function index()
     {
-        //
+        $patients = Patient::all();
+        return view('patient.index', ['patients' => $patients]);
     }
 
     /**
@@ -96,7 +97,43 @@ class PatientController extends Controller
      */
     public function edit(Patient $patient)
     {
-        //
+        return view('patient.edit', compact('patient'));
+    }
+
+    public function adminPatientUpdate(Patient $patient, Request $request)
+    {
+        // Validate the incoming request data
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255', // Added max length for name
+            'dob' => 'required|date|before:today', // Ensure DOB is before today
+            'gender' => 'required|in:male,female,other',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
+        $patient->user->name = $validatedData['name'];
+
+        $patient->dob = $validatedData['dob'];
+        $patient->gender = $validatedData['gender'];
+
+        // Handle file upload
+        if ($request->hasFile('image')) {
+            if ($patient->image && Storage::exists('public/uploads_patient/' . $patient->image)) {
+                Storage::delete('public/uploads_patient/' . $patient->image);
+            }
+
+            $imagePath = $request->file('image')->store('uploads_patient', 'public');
+            $patient->image = basename($imagePath);
+        }
+
+        $patient->user->save();
+
+        $patient->save();
+
+        // Redirect back with success message
+        return redirect()->back()->with('status', [
+            'message' => 'Patient updated successfully',
+            'type' => 'success'
+        ]);
     }
 
     /**
@@ -138,6 +175,11 @@ class PatientController extends Controller
      */
     public function destroy(Patient $patient)
     {
-        //
+        $patientName = $patient->user->name;
+        $patient->delete();
+        return redirect()->route('patient.index')->with('status', [
+            'message' =>  'Patient ' . $patientName .  ' has been deleted successfully.',
+            'type' => 'failure'
+        ]);
     }
 }

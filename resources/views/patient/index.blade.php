@@ -1,4 +1,4 @@
-{{-- <x-app-layout>
+<x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
             Patient
@@ -9,7 +9,7 @@
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight inline-block">
                 Patient Information
             </h2>
-            <a href="{{ route('patient.create') }}" style="color:blue"> Create Patient</a>
+            {{-- <a href="{{ route('patient.create') }}" style="color:blue"> Create Patient</a> --}}
         </div>
     </x-slot>
 
@@ -32,10 +32,7 @@
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                     Name
                                 </th>
-                                <th
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                    Contact
-                                </th>
+
                                 <th
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                     Date of Birth
@@ -71,14 +68,12 @@
                                 <tr>
                                     <td
                                         class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
-                                        {{ $patient->id }}
+                                        {{ $loop->index + 1 }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                        {{ $patient->name }}
+                                        {{ $patient->user->name }}
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                        {{ $patient->contact }}
-                                    </td>
+
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                                         {{ $patient->dob }}
                                     </td>
@@ -86,7 +81,7 @@
                                         {{ $patient->age }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                        {{ $patient->email }}
+                                        {{ $patient->user->email }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                                         <img src="{{ asset('uploads_patient/' . $patient->image) }}" alt="Profile Image"
@@ -99,8 +94,22 @@
                                         {{ $patient->created_at }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                        <a href="{{ route('patient.edit', ['id' => $patient->id]) }}">Edit</a>
-                                        <a href="">Delete</a>
+                                        <!-- Edit Button -->
+                                        <a href="{{ route('patient.edit', $patient->id) }}"
+                                            class="inline-block px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">
+                                            Edit
+                                        </a>
+
+                                        <!-- Delete Form -->
+                                        <form action="{{ route('admin.patient.delete', $patient->id) }}" method="POST"
+                                            class="inline-block" onsubmit="return confirmCancel()">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit"
+                                                class="inline-block px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600">
+                                                Delete
+                                            </button>
+                                        </form>
                                     </td>
                                 </tr>
                             @endforeach
@@ -111,5 +120,11 @@
             </div>
         </div>
     </div>
-
-</x-app-layout> --}}
+    <script>
+        function confirmCancel() {
+            return confirm(
+                "Are you sure you want to delete this patient? This action cannot be undone and will permanently remove the patient. Click 'Cancel' to go back or 'OK' to proceed."
+            );
+        }
+    </script>
+</x-app-layout>
