@@ -11,8 +11,8 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
-                    <div class="bg-red-100 border-l-4 border-red-500 p-4 mb-6 rounded-md">
-                        <p class="text-red-600 font-semibold">
+                    <div class="bg-orange-100 border-l-4 border-orange-500 p-4 mb-6 rounded-md">
+                        <p class="text-orange-600 font-semibold">
                             *Important Note:
                         </p>
                         <p>

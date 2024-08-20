@@ -66,7 +66,6 @@ class AppointmentPolicy
     {
 
         return $user->role === 'admin' ||
-            // ($user->role === 'patient' && $user->id === $appointment->patient->user->id) ||
             ($user->role === 'doctor' && $user->id === $appointment->doctor->user->id);
     }
 }
