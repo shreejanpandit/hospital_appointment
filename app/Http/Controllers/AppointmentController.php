@@ -10,6 +10,7 @@ use App\Models\Department;
 use App\Models\Doctor;
 use App\Models\Schedule;
 use App\Notifications\AppointmentRescheduled;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -17,6 +18,7 @@ use Illuminate\Support\Facades\Notification;
 
 class AppointmentController extends Controller
 {
+    use AuthorizesRequests;
     /**
      * Display a listing of the resource.
      */
@@ -44,12 +46,13 @@ class AppointmentController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    // AppointmentController.php
+
     public function store(AppointmentStoreRequest  $request)
     {
-        // dd($request);
+
         $user = Auth::user();
         $doctorId = $request['doctor_id'];
+        $this->authorize('create', Appointment::class);
 
         $appointment = Appointment::create([
             'patient_id' => $user->patient->id,
@@ -104,6 +107,8 @@ class AppointmentController extends Controller
 
     public function reshedule(Appointment $appointment)
     {
+        $user = Auth::user();
+        $this->authorize('reschedule', $appointment);
         $doctor_schedule = Schedule::query()
             ->where('doctor_id', '=', $appointment->doctor_id)
             ->with('doctor')
@@ -132,6 +137,7 @@ class AppointmentController extends Controller
 
     public function resheduleStore(Appointment $appointment, Request $request)
     {
+        $this->authorize('reschedule', $appointment);
         $request->validate([
             'date' => 'required|date|after_or_equal:today',
         ]);
@@ -154,6 +160,10 @@ class AppointmentController extends Controller
      */
     public function update(Request $request, Appointment $appointment)
     {
+        $user = Auth::user();
+
+        $this->authorize('update', $appointment);
+
         $request->validate([
             'description' => 'required|string|max:255',
         ]);
@@ -175,6 +185,7 @@ class AppointmentController extends Controller
      */
     public function destroy(Appointment $appointment)
     {
+        $this->authorize('delete', $appointment);
         $doctorName = $appointment->doctor->user->name;
         $appointmentDate = $appointment->date->format('F j, Y');
 
