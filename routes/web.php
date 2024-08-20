@@ -30,6 +30,7 @@ Route::middleware(['auth', 'role:patient'])->group(function () {
     Route::get('/appointments/{appointment}/edit', [AppointmentController::class, 'edit'])->name('appointment.edit');
     Route::patch('/appointments/{appointment}', [AppointmentController::class, 'update'])->name('appointment.update');
     Route::delete('/appointments/{appointment}', [AppointmentController::class, 'destroy'])->name('appointment.cancel');
+    Route::post('/notifications/mark-as-read', [PatientController::class, 'markNotificationsAsRead'])->name('notifications.markAsRead');
 });
 
 // Doctor Routes

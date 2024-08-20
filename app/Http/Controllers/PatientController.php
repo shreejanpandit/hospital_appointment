@@ -76,10 +76,13 @@ class PatientController extends Controller
 
         // Fetch notifications for the patient
         $notifications = $user->notifications()->latest()->get();
+        $unreadNotificationsCount = $notifications->where('read_at', null)->count();
+
 
         return view('patient.dashboard', [
             'appointments' => $appointments,
-            'notifications' => $notifications
+            'notifications' => $notifications,
+            'unreadNotificationsCount' => $unreadNotificationsCount
         ]);
     }
 
@@ -90,6 +93,12 @@ class PatientController extends Controller
     public function show(Patient $patient)
     {
         //
+    }
+    // In your controller
+    public function markNotificationsAsRead()
+    {
+        Auth::user()->unreadNotifications->markAsRead();
+        return response()->json(['status' => 'success']);
     }
 
     /**

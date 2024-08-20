@@ -16,15 +16,19 @@
                 <div class="hidden sm:flex sm:items-center">
                     <x-dropdown align="right" width="50">
                         <x-slot name="trigger">
-                            <button
-                                class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
+                            <button id="notificationButton"
+                                class="relative inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
                                 <div>Notification</div>
+                                @if ($unreadNotificationsCount > 0)
+                                    <span id="notificationBadge"
+                                        class="absolute top-0 right-0 block h-2.5 w-2.5 rounded-full bg-red-500"></span>
+                                @endif
                             </button>
                         </x-slot>
 
                         <x-slot name="content">
-                            <!-- Notifications Section -->
 
+                            <!-- Notifications Section -->
                             @if ($notifications->isNotEmpty())
                                 <div
                                     class="bg-yellow-100 dark:bg-yellow-900 border border-yellow-300 dark:border-yellow-700 rounded-md p-4 max-h-80 overflow-y-auto w-80">
@@ -54,6 +58,7 @@
                         </x-slot>
                     </x-dropdown>
                 </div>
+
 
             </div>
         </div>
@@ -122,6 +127,28 @@
     </div>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const notificationButton = document.getElementById('notificationButton');
+            const notificationBadge = document.getElementById('notificationBadge');
+
+            notificationButton.addEventListener('click', function() {
+                fetch('{{ route('notifications.markAsRead') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                .getAttribute('content')
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            notificationBadge.style.display = 'none';
+                        }
+                    });
+            });
+        });
+
         function confirmCancel() {
             return confirm(
                 "Are you sure you want to cancel this appointment? This action cannot be undone and will permanently remove the appointment. Click 'Cancel' to go back or 'OK' to proceed."
