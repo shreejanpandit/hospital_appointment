@@ -31,9 +31,10 @@
 
                 <!-- Card 3 -->
                 <x-dashboard-card title="Total Appointments" content="{{ $total_appointment }}"
-                    route="{{ route('admin.dashboard') }}" />
+                    route="{{ route('appointment.index') }}" />
 
             </div>
+            {{-- @dd(Auth::user()->role) --}}
         </div>
     </div>
 </x-app-layout>

@@ -6,6 +6,7 @@ use App\Http\Requests\patient\PatientUpdateRequest;
 use App\Http\Requests\PatientStoreRequest;
 use App\Models\Appointment;
 use App\Models\Patient;
+use App\Services\PatientService;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -35,28 +36,10 @@ class PatientController extends Controller
      */
     public function store(PatientStoreRequest $request)
     {
-        $patient_validate = $request->all();
-
-        // Check if an image is provided
-        if ($request->hasFile('image')) {
-            $name = $request->file('image')->getClientOriginalName();
-
-            $request->file('image')->move(public_path('uploads_patient'), $name);
-        } else {
-            $name = 'default_image.png';
-        }
-
-        $dob = $request->dob;
-        $dobDateTime = new DateTime($dob);
-        $currentDateTime = new DateTime();
-        $age = $currentDateTime->diff($dobDateTime)->y;
-
-        $patient_validate["age"] = $age;
-        $patient_validate['image'] = $name;
         $user = Auth::user();
-        $patient_validate["user_id"] = $user->id;
 
-        Patient::create($patient_validate);
+        $patientService = new PatientService();
+        $patientService->save($request, $user->id);
 
         return redirect()->route('patient.dashboard')->with('status', [
             'message' => 'Patient Created sucessfully',
@@ -94,7 +77,8 @@ class PatientController extends Controller
     {
         //
     }
-    // In your controller
+
+
     public function markNotificationsAsRead()
     {
         Auth::user()->unreadNotifications->markAsRead();
@@ -148,31 +132,11 @@ class PatientController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(PatientUpdateRequest $request, int $id)
+    public function update(PatientUpdateRequest $request, Patient $patient)
     {
-        // Find the patient record
-        $patient = Patient::findOrFail($id);
+        $patientService = new PatientService();
+        $patientService->update($request, $patient);
 
-        // Update patient details
-        $patient->dob = $request->input('dob');
-        $patient->gender = $request->input('gender');
-
-        // Handle file upload
-        if ($request->hasFile('image')) {
-            // Delete old image if it exists
-            if ($patient->image && Storage::exists('public/uploads_patient/' . $patient->image)) {
-                Storage::delete('public/uploads_patient/' . $patient->image);
-            }
-
-            // Store new image
-            $imagePath = $request->file('image')->store('uploads_patient', 'public');
-            $patient->image = basename($imagePath);
-        }
-
-        // Save changes
-        $patient->save();
-
-        // Redirect back with success message
         return redirect()->back()->with('status', [
             'message' => 'Patient updated sucessfully',
             'type' => 'success'
@@ -184,10 +148,9 @@ class PatientController extends Controller
      */
     public function destroy(Patient $patient)
     {
-        $patientName = $patient->user->name;
         $patient->delete();
         return redirect()->route('patient.index')->with('status', [
-            'message' =>  'Patient ' . $patientName .  ' has been deleted successfully.',
+            'message' =>  'Patient ' . $patient->user->name .  ' has been deleted successfully.',
             'type' => 'failure'
         ]);
     }

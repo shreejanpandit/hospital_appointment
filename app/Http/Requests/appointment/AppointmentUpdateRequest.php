@@ -4,7 +4,7 @@ namespace App\Http\Requests\appointment;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class AppointmentStoreRequest extends FormRequest
+class AppointmentUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -19,15 +19,11 @@ class AppointmentStoreRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-    // AppointmentStoreRequest.php
-    public function rules()
+    public function rules(): array
     {
         return [
-            // 'patient_id' => 'required|integer|exists:patients,id',
-            'doctor_id' => 'required|integer|exists:doctors,id',
             'description' => 'required|string|max:255',
-            'date' => 'required|date|after_or_equal:today',
-            // 'time' => 'nume|date_format:H:i'
+
         ];
     }
 }
