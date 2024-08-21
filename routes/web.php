@@ -2,9 +2,11 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AppointmentController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ResheduleController;
 use App\Http\Controllers\ScheduleController;
 use Illuminate\Support\Facades\Route;
 
@@ -24,7 +26,7 @@ require __DIR__ . '/auth.php';
 // Admin Routes 
 Route::middleware(['auth', 'role:admin'])->group(function () {
 
-    Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::get('/dashboard/admin', [DashboardController::class, 'dashboardAdmin'])->name('admin.dashboard');
     Route::get('/patients/index', [PatientController::class, 'index'])->name('patient.index');
     Route::get('/patients/{patient}', [PatientController::class, 'edit'])->name('patient.edit');
     Route::patch('patients/{patient}', [PatientController::class, 'adminPatientUpdate'])->name('admin.patient.update');
@@ -41,10 +43,10 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 // Patient Routes
 Route::middleware(['auth', 'role:patient'])->group(function () {
 
-    Route::get('/patient/dashboard', [PatientController::class, 'dashboard'])->name('patient.dashboard');
+    Route::get('/dashboard/patient', [DashboardController::class, 'dashboardPatient'])->name('patient.dashboard');
     Route::get('/appointment', [AppointmentController::class, 'create'])->name('appointment.create');
     Route::post('/appointment', [AppointmentController::class, 'store'])->name('appointment.store');
-    Route::get('/appointments/{id}', [AppointmentController::class, 'show'])->name('appointment.show');
+    Route::get('/appointments/{appointment}', [AppointmentController::class, 'show'])->name('appointment.show');
     Route::get('/appointments/{appointment}/edit', [AppointmentController::class, 'edit'])->name('appointment.edit');
     Route::patch('/appointments/{appointment}', [AppointmentController::class, 'update'])->name('appointment.update');
     Route::delete('/appointments/{appointment}', [AppointmentController::class, 'destroy'])->name('appointment.cancel');
@@ -53,11 +55,11 @@ Route::middleware(['auth', 'role:patient'])->group(function () {
 
 // Doctor Routes
 Route::middleware(['auth', 'role:doctor'])->group(function () {
-    Route::get('/doctor/dashboard', [DoctorController::class, 'dashboard'])->name('doctor.dashboard');
+    Route::get('/dashboard/doctor', [DashboardController::class, 'dashboardDoctor'])->name('doctor.dashboard');
     Route::get('/doctor/schedule', [ScheduleController::class, 'index'])->name('doctor.schedule');
     Route::post('/doctor/schedule/update', [ScheduleController::class, 'update'])->name('doctor.schedule.update');
-    Route::get('/appointments/{appointment}/reshedule', [ScheduleController::class, 'reshedule'])->name('appointment.reshedule');
-    Route::patch('/appointments/{appointment}/reshedule', [ScheduleController::class, 'resheduleStore'])->name('appointment.reshedule.store');
+    Route::get('/reshedule/{appointment}', [ResheduleController::class, 'show'])->name('appointment.reshedule');
+    Route::patch('/reshedule/{appointment}', [ResheduleController::class, 'store'])->name('appointment.reshedule.store');
     Route::post('/doctor/schedule/find', [DoctorController::class, 'findDoctorsSchedule'])->name('doctor.schedule.find');
 });
 

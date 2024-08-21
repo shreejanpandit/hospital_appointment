@@ -47,27 +47,6 @@ class PatientController extends Controller
         ]);
     }
 
-    public function dashboard()
-    {
-        $user = Auth::user();
-
-        // Fetch appointments for the patient
-        $appointments = Appointment::where('patient_id', $user->patient->id)
-            ->with('patient', 'doctor')
-            ->orderBy('date', 'asc')
-            ->get();
-
-        // Fetch notifications for the patient
-        $notifications = $user->notifications()->latest()->get();
-        $unreadNotificationsCount = $notifications->where('read_at', null)->count();
-
-
-        return view('patient.dashboard', [
-            'appointments' => $appointments,
-            'notifications' => $notifications,
-            'unreadNotificationsCount' => $unreadNotificationsCount
-        ]);
-    }
 
 
     /**

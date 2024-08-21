@@ -71,10 +71,8 @@ class AppointmentController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show(Appointment  $appointment)
     {
-        $appointment = Appointment::findOrFail($id);
-
         return view('appointment.show', compact('appointment'));
     }
 

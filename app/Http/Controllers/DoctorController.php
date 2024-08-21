@@ -56,38 +56,6 @@ class DoctorController extends Controller
         ]);
     }
 
-    public function dashboard()
-    {
-        $user = Auth::user();
-        $doctor = Doctor::where('user_id', $user->id)->firstOrFail();
-        $appointments = Appointment::where('doctor_id', $doctor->id)->get();
-
-        // Define the current date and time
-        $today = now()->startOfDay();
-        $tomorrow = now()->addDay()->startOfDay();
-
-        // Initialize arrays for each category of appointments
-        $todayAppointments = [];
-        $upcomingAppointments = [];
-        $previousAppointments = [];
-
-        foreach ($appointments as $appointment) {
-            if ($appointment->date->isSameDay($today)) {
-                $todayAppointments[] = $appointment;
-            } elseif ($appointment->date->greaterThan($today)) {
-                $upcomingAppointments[] = $appointment;
-            } else {
-                $previousAppointments[] = $appointment;
-            }
-        }
-
-        return view('doctor.dashboard', [
-            'doctor' => $doctor,
-            'todayAppointments' => $todayAppointments,
-            'upcomingAppointments' => $upcomingAppointments,
-            'previousAppointments' => $previousAppointments
-        ]);
-    }
 
     public function findDoctor(Request $request)
     {

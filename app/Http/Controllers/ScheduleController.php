@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Appointment;
+
 use App\Models\Schedule;
-use App\Notifications\AppointmentRescheduled;
+use App\Services\ScheduleService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Notification;
+
 
 class ScheduleController extends Controller
 {
@@ -20,28 +20,9 @@ class ScheduleController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $doctorId = $user->doctor->id;
 
-        // Define the days of the week
-        $weekDays = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-
-        // Fetch the existing schedule for the doctor
-        $schedules = Schedule::where('doctor_id', $doctorId)
-            ->get()
-            ->keyBy('week_day');
-
-        // Prepare data to pass to the view
-        $scheduleData = [];
-        foreach ($weekDays as $day) {
-            $schedule = $schedules->get($day);
-            $scheduleData[$day . '_start_time'] = $schedule ? $schedule->start_time->format('H:i') : '';
-            $scheduleData[$day . '_end_time'] = $schedule ? $schedule->end_time->format('H:i') : '';
-        }
-
-        return view('doctor.schedule', [
-            'weekDays' => $weekDays,
-            'schedule' => $scheduleData
-        ]);
+        $scheduleService = new ScheduleService();
+        return view('doctor.schedule', $scheduleService->index($user));
     }
 
 
@@ -73,19 +54,6 @@ class ScheduleController extends Controller
     {
         //
     }
-    // public function getSchedules($doctorId)
-    // {
-    //     $schedules = Schedule::with('doctor')
-    //         ->where('doctor_id', $doctorId)
-    //         ->get();
-    //     // $schedules = Schedule::where('doctor_id', $doctorId)
-    //     //     ->get()
-    //     //     ->groupBy(function ($date) {
-    //     //         return $date->start_time->format('l'); // Group by weekday
-    //     //     });
-
-    //     return response()->json($schedules);
-    // }
 
     /**
      * Update the specified resource in storage.
@@ -93,27 +61,8 @@ class ScheduleController extends Controller
     public function update(Request $request, Schedule $schedule)
     {
         $user = Auth::user();
-        $doctorId = $user->doctor->id;
-
-        $weekDays = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-
-        foreach ($weekDays as $day) {
-            $startTime = $request->input("{$day}_start_time");
-            $endTime = $request->input("{$day}_end_time");
-
-            if ($startTime && $endTime) {
-                $schedule::updateOrCreate(
-                    [
-                        'doctor_id' => $doctorId,
-                        'week_day' => $day
-                    ],
-                    [
-                        'start_time' => $startTime,
-                        'end_time' => $endTime
-                    ]
-                );
-            }
-        }
+        $scheduleService = new ScheduleService();
+        $scheduleService->update($user->doctor->id, $request, $schedule);
 
         return redirect()->route('doctor.schedule')->with('status', [
             'message' => 'Schedule updated successfully',
@@ -127,56 +76,5 @@ class ScheduleController extends Controller
     public function destroy(Schedule $schedule)
     {
         //
-    }
-
-    public function reshedule(Appointment $appointment)
-    {
-        $user = Auth::user();
-        $this->authorize('reschedule', $appointment);
-        $doctor_schedule = Schedule::query()
-            ->where('doctor_id', '=', $appointment->doctor_id)
-            ->with('doctor')
-            ->get();
-
-        $weekDays = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-
-        $schedules = [];
-
-        foreach ($weekDays as $day) {
-            $daySchedule = $doctor_schedule->where('week_day', $day)->first();
-            $schedules[$day . '_start_time'] = $daySchedule
-                ? $daySchedule->start_time->format('H:i') // Use 24-hour format
-                : '';
-            $schedules[$day . '_end_time'] = $daySchedule
-                ? $daySchedule->end_time->format('H:i') // Use 24-hour format
-                : '';
-        }
-
-        return view('appointment.reshedule', [
-            'doctor_schedule' => $doctor_schedule,
-            'schedules' => $schedules,
-            'appointment' => $appointment
-        ]);
-    }
-
-    public function resheduleStore(Appointment $appointment, Request $request)
-    {
-        $this->authorize('reschedule', $appointment);
-        $request->validate([
-            'date' => 'required|date|after_or_equal:today',
-        ]);
-
-        $appointment->update([
-            'date' => $request->date,
-            'time' =>  $request->time
-        ]);
-
-        // dd($appointment->patient->user->name);
-        Notification::send($appointment->patient->user, new AppointmentRescheduled($appointment));
-
-        return redirect()->route('doctor.dashboard')->with('status', [
-            'message' => 'The appointment date has been rescheduled successfully.',
-            'type' => 'success'
-        ]);
     }
 }
