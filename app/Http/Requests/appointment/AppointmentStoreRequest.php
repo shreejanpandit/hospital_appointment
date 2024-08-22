@@ -19,15 +19,12 @@ class AppointmentStoreRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-    // AppointmentStoreRequest.php
     public function rules()
     {
         return [
-            // 'patient_id' => 'required|integer|exists:patients,id',
             'doctor_id' => 'required|integer|exists:doctors,id',
             'description' => 'required|string|max:255',
             'date' => 'required|date|after_or_equal:today',
-            // 'time' => 'nume|date_format:H:i'
         ];
     }
 }

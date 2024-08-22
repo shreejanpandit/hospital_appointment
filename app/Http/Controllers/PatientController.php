@@ -17,7 +17,7 @@ class PatientController extends Controller
     public function index(Request $request)
     {
         $patientService = new PatientService();
-        $data =  $patientService->show($request->input('search'));
+        $data =  $patientService->show($request->search);
         $data['currentPage'] = $request->input('page', 1);
         return view('patient.index', $data);
     }

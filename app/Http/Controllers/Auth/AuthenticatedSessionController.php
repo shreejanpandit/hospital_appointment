@@ -27,10 +27,8 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
 
         $test = $request->session()->regenerate();
-        // dd($test);
         if ($test) {
             $user = Auth::user()->role;
-            // Redirect to appropriate form based on role
             if ($user === 'patient') {
                 return redirect()->route('patient.dashboard')->with('status', [
                     'message' => 'Patient Login sucessfully',
