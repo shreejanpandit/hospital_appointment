@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 
 use App\Models\Schedule;
+use App\Services\DoctorService;
 use App\Services\ScheduleService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
@@ -42,9 +43,12 @@ class ScheduleController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Schedule $schedule)
+    public function show(Schedule $schedule, Request $request)
     {
-        //
+        $doctorService = new DoctorService();
+        $data = $doctorService->schedule($request->doctor_id);
+
+        return view('doctor.show-schedule', $data);
     }
 
     /**

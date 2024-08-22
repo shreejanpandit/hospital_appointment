@@ -9,12 +9,11 @@
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                 Patients Information
             </h2>
-            <form action="{{ route('patient.search') }}" method="GET" class="flex items-center space-x-4">
+            <form method="GET" action="{{ route('patient.index') }}" class="flex items-center space-x-4">
                 @csrf
-                <input id="search"
-                    class="w-80 border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                    type="search" name="search" value="{{ isset($search) ? $search : '' }}" placeholder="Search Patient" autocomplete="off" />
-                <x-input-error :messages="$errors->get('search')" class="mt-2 text-red-600" />
+                <input type="search" name="search" value="{{ request('search') }}" placeholder="Search patients..."
+                    id="search"
+                    class="w-80 border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
             </form>
         </div>
     </x-slot>
@@ -121,6 +120,9 @@
                             @endforeach
                         </tbody>
                     </table>
+                    <div>
+                        {{ $patients->appends(['search' => request('search')])->links() }}
+                    </div>
                 </div>
 
             </div>

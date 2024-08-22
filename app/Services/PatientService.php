@@ -16,6 +16,22 @@ class PatientService
         //
     }
 
+    public function show(?string $searchTerm)
+    {
+        $perPage = 10;
+
+        $patients = Patient::with('user')
+            ->where('gender', 'like', "%{$searchTerm}%")
+            ->orWhereHas('user', function ($query) use ($searchTerm) {
+                $query->where('name', 'like', "%{$searchTerm}%")
+                    ->orWhere('email', 'like', "%{$searchTerm}%");
+            })
+            ->paginate($perPage);
+
+
+        return ['patients' => $patients, 'search' => $searchTerm, 'perPage' => $perPage];
+    }
+
     public function save($request, int $id)
     {
         $patient_validate = $request->all();

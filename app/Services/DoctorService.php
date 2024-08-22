@@ -16,6 +16,32 @@ class DoctorService
         //
     }
 
+    public function show(?string $searchTerm)
+    {
+        $perPage = 10;
+
+        $query = Doctor::with(['user', 'department']);
+
+        if ($searchTerm) {
+            $query->whereHas('user', function ($query) use ($searchTerm) {
+                $query->where('name', 'like', "%{$searchTerm}%");
+            })
+                ->orWhereHas('department', function ($query) use ($searchTerm) {
+                    $query->where('name', 'like', "%{$searchTerm}%");
+                })
+                ->orWhere('bio', 'like', "%{$searchTerm}%");
+        }
+
+        $doctors = $query->paginate($perPage);
+
+        return [
+            'doctors' => $doctors,
+            'search' => $searchTerm,
+            'perPage' => $perPage,
+
+        ];
+    }
+
     public function save($request, int $id)
     {
         $doctor_validate = $request->all();

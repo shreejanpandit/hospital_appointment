@@ -4,14 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\doctor\DoctorStoreRequest;
 use App\Http\Requests\doctor\DoctorUpdateRequest;
-use App\Models\Appointment;
 use App\Models\Department;
 use App\Models\Doctor;
-use App\Models\Schedule;
 use App\Services\DoctorService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 
 class DoctorController extends Controller
 {
@@ -20,16 +17,12 @@ class DoctorController extends Controller
      */
     public function index(Request $request)
     {
-        $perPage = 10;
-        $doctors = Doctor::paginate($perPage);
 
-        return view('doctor.index', [
-            'doctors' => $doctors,
-            'perPage' => $perPage,
-            'currentPage' => $request->input('page', 1),
-        ]);
+        $doctorService = new DoctorService();
+        $data =  $doctorService->show($request->input('search'));
+        $data['currentPage'] = $request->input('page', 1);
+        return view('doctor.index', $data);
     }
-
 
     /**
      * Show the form for creating a new resource.
@@ -57,7 +50,10 @@ class DoctorController extends Controller
     }
 
 
-    public function findDoctor(Request $request)
+    /**
+     * Display the specified resource.
+     */
+    public function show(Doctor $doctor, Request $request)
     {
         $department_id = $request->input('department_id');
         $department_doctors = Doctor::where('department_id', $department_id)->get();
@@ -69,23 +65,6 @@ class DoctorController extends Controller
         ]);
     }
 
-    public function findDoctorsSchedule(Request $request)
-    {
-        $doctorService = new DoctorService();
-        $data = $doctorService->schedule($request->doctor_id);
-
-        return view('doctor.show-schedule', $data);
-    }
-
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Doctor $doctor)
-    {
-        //
-    }
-
     /**
      * Show the form for editing the specified resource.
      */
@@ -95,44 +74,6 @@ class DoctorController extends Controller
         return view('doctor.edit', compact('doctor', 'departments'));
     }
 
-    public function adminDoctorUpdate(Doctor $doctor, Request $request)
-    {
-        // Validate the incoming request data
-        $test =   $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'contact' => 'required|string',
-            'bio' => 'required|string|max:255',
-            'department_id' => 'required|exists:departments,id',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-        ]);
-        // dd($test);
-
-        $doctor->user->name = $validatedData['name'];
-
-        $doctor->contact = $validatedData['contact'];
-        $doctor->bio = $validatedData['bio'];
-        $doctor->department_id = $validatedData['department_id'];
-
-        // // Handle file upload
-        if ($request->hasFile('image')) {
-            if ($doctor->image && Storage::exists('public/uploads_doctor/' . $doctor->image)) {
-                Storage::delete('public/uploads_doctor/' . $doctor->image);
-            }
-
-            $imagePath = $request->file('image')->store('uploads_doctor', 'public');
-            $doctor->image = basename($imagePath);
-        }
-
-        $doctor->user->save();
-
-        $doctor->save();
-
-        // // Redirect back with success message
-        return redirect()->back()->with('status', [
-            'message' => 'Doctor updated successfully',
-            'type' => 'success'
-        ]);
-    }
     /**
      * Update the specified resource in storage.
      */
@@ -159,31 +100,5 @@ class DoctorController extends Controller
             'message' =>  'Dr.' . $doctor->user->name .  ' has been deleted successfully.',
             'type' => 'failure'
         ]);
-    }
-
-    public function search(Request $request)
-    {
-        $searchTerm = $request->input('search');
-        $perPage = 10;
-        // Example of querying doctors based on the search term
-        $doctors = Doctor::with(['user', 'department'])
-            ->WhereHas('user', function ($query) use ($searchTerm) {
-                $query->where('name', 'like', "%{$searchTerm}%");
-            })
-            ->orWhereHas('department', function ($query) use ($searchTerm) {
-                $query->where('name', 'like', "%{$searchTerm}%");
-            })
-            ->orWhere('bio', 'like', "%{$searchTerm}%")
-            ->paginate($perPage);
-
-        return view(
-            'doctor.index',
-            [
-                'doctors' => $doctors,
-                'search' => $searchTerm,
-                'perPage' => $perPage,
-                'currentPage' => $request->input('page', 1),
-            ]
-        );
     }
 }

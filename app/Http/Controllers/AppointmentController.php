@@ -113,7 +113,6 @@ class AppointmentController extends Controller
 
         $appointment->delete();
 
-        // Redirect with a success message
         return redirect()->route('patient.dashboard')->with('status', [
             'message' => 'Appointment with Dr. ' . $appointment->doctor->user->name . ' scheduled for ' . $appointment->date->format('F j, Y') . ' has been canceled successfully.',
             'type' => 'failure'
