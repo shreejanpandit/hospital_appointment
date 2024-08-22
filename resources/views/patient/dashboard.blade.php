@@ -7,7 +7,7 @@
             <!-- Aligning the content to the right -->
             <div class="ml-auto flex items-center space-x-4">
                 @if (Auth::user()->patient->id)
-                    <a href="{{ route('appointment.create') }}" class="text-blue-500 hover:underline">
+                    <a href="{{ route('appointments.create') }}" class="text-blue-500 hover:underline">
                         Add Appointment
                     </a>
                 @endif
@@ -99,11 +99,11 @@
                                         </p>
                                     </div>
                                     <div class="flex space-x-2">
-                                        <a href="{{ route('appointment.show', $appointment->id) }}"
+                                        <a href="{{ route('appointments.show', $appointment->id) }}"
                                             class="inline-block px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">
                                             Details
                                         </a>
-                                        <a href="{{ route('appointment.edit', $appointment->id) }}"
+                                        <a href="{{ route('appointments.edit', $appointment->id) }}"
                                             class="inline-block px-4 py-2 text-white bg-gray-500 rounded hover:bg-gray-600">
                                             Edit
                                         </a>

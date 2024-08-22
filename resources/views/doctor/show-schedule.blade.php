@@ -48,7 +48,7 @@
                     </div>
 
                     <!-- Appointment Form -->
-                    <form action="{{ route('appointment.store') }}" method="POST" class="mt-6">
+                    <form action="{{ route('appointments.store') }}" method="POST" class="mt-6">
                         @csrf
                         <input type="hidden" id="doctor_id" name="doctor_id"
                             value="{{ $doctor_schedule->first()->doctor->id }}">

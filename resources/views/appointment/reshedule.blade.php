@@ -13,7 +13,7 @@
                 <div class="p-6 text-gray-900 dark:text-gray-100">
 
                     <!-- Appointment Form -->
-                    <form action="{{ route('appointment.reshedule.store', $appointment->id) }}" method="POST"
+                    <form action="{{ route('appointment.reshedule.update', $appointment->id) }}" method="POST"
                         class="mt-6">
                         @csrf
                         @method('PATCH')

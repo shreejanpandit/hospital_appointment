@@ -65,8 +65,7 @@ class AppointmentPolicy
      */
     public function reschedule(User $user, Appointment $appointment): bool
     {
-
         return $user->role === 'admin' ||
-            ($user->role === 'doctor' && $user->id === $appointment->doctor->user->id);
+            ($user->role === 'doctor' && $user->id === $appointment->doctor?->user?->id);
     }
 }

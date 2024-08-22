@@ -12,7 +12,7 @@
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
                     <!-- Appointment update Form -->
-                    <form action="{{ route('appointment.update', $appointment->id) }}" method="POST" class="mt-6">
+                    <form action="{{ route('appointments.update', $appointment->id) }}" method="POST" class="mt-6">
                         @csrf
                         @method('PATCH')
                         <!-- Description -->

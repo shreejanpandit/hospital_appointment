@@ -11,10 +11,6 @@
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight inline-block">
                 Admin
             </h2>
-            {{-- <a href="{{ route('appointment.create') }}" style="color:blue"> Add Appointment</a>
-            <a href="{{ route('admin.dashboard') }}" style="color:blue"> View doctors Appointment</a>
-            <a href="{{ route('appointment.create') }}" style="color:blue"> View patients Appointment</a> --}}
-
         </div>
     </x-slot>
     <x-flash-message />
@@ -34,7 +30,6 @@
                     route="{{ route('appointment.index') }}" />
 
             </div>
-            {{-- @dd(Auth::user()->role) --}}
         </div>
     </div>
 </x-app-layout>

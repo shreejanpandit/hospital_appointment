@@ -15,29 +15,30 @@ class ResheduleController extends Controller
 {
     use AuthorizesRequests;
 
-    public function show(Appointment $appointment)
+    public function show(Appointment $reshedule)
     {
+
         $user = Auth::user();
-        $this->authorize('reschedule', $appointment);
+        $this->authorize('reschedule', $reshedule);
 
         $rescheduleService = new RescheduleService();
 
-        return view('appointment.reshedule', $rescheduleService->show($appointment));
+        return view('appointment.reshedule', $rescheduleService->show($reshedule));
     }
 
-    public function store(Appointment $appointment, Request $request)
+    public function update(Appointment $reshedule, Request $request)
     {
-        $this->authorize('reschedule', $appointment);
+        $this->authorize('reschedule', $reshedule);
         $request->validate([
             'date' => 'required|date|after_or_equal:today',
         ]);
 
-        $appointment->update([
+        $reshedule->update([
             'date' => $request->date,
             'time' =>  $request->time
         ]);
 
-        Notification::send($appointment->patient->user, new AppointmentRescheduled($appointment));
+        Notification::send($reshedule->patient->user, new AppointmentRescheduled($reshedule));
 
         return redirect()->route('doctor.dashboard')->with('status', [
             'message' => 'The appointment date has been rescheduled successfully.',
