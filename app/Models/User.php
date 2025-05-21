@@ -20,6 +20,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
     ];
 
     /**
@@ -32,6 +33,11 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    public function hasRole($role)
+    {
+        // dd($role);
+        return $this->role === $role;
+    }
     /**
      * Get the attributes that should be cast.
      *
@@ -43,5 +49,15 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function patient()
+    {
+        return $this->hasOne(Patient::class);
+    }
+
+    public function doctor()
+    {
+        return $this->hasOne(Doctor::class);
     }
 }
