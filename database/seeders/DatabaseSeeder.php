@@ -18,8 +18,12 @@ class DatabaseSeeder extends Seeder
         User::factory()->create([
             'name' => 'Shreejan Pandit',
             'email' => 'admin@gmail.com',
-            'password' => '11111111',
+            'password' => 'password',
             'role' => 'admin'
         ]);
+          $this->call([
+        DepartmentSeeder::class,
+        DoctorSeeder::class,
+    ]);
     }
 }
